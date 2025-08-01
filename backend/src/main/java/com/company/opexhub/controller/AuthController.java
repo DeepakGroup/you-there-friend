@@ -20,7 +20,7 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             JwtResponse jwtResponse = authService.authenticateUser(loginRequest);
-            return ResponseEntity.ok(jwtResponse);
+            return ResponseEntity.ok(new ApiResponse(true, "Login successful", jwtResponse));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse(false, "Invalid credentials!"));
