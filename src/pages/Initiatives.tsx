@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,16 +20,28 @@ import { mockInitiatives, paginateArray, User } from "@/lib/mockData";
 import { useInitiatives } from "@/hooks/useInitiatives";
 
 interface Initiative {
-  id: string;
+  id: string | number;
   title: string;
   site: string;
   status: string;
   priority: string;
-  expectedSavings: string;
+  expectedSavings: string | number;
+  actualSavings?: string | number;
+  progressPercentage?: number;
   progress: number;
   lastUpdated: string;
+  updatedAt?: string;
   discipline: string;
   submittedDate: string;
+  createdAt?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+  currentStage?: number;
+  requiresMoc?: boolean;
+  requiresCapex?: boolean;
+  createdByName?: string;
+  createdByEmail?: string;
 }
 
 interface InitiativesProps {
@@ -51,7 +63,38 @@ export default function Initiatives({ user }: InitiativesProps) {
   });
 
   // Use API data if available, otherwise fallback to mock data
-  const initiatives = apiInitiatives?.content || mockInitiatives;
+  const initiatives = React.useMemo(() => {
+    if (apiInitiatives?.content) {
+      // Transform API data to match interface
+      return apiInitiatives.content.map((item: any) => ({
+        id: item.id?.toString() || item.id,
+        title: item.title || '',
+        site: item.site || '',
+        status: item.status || '',
+        priority: item.priority || '',
+        expectedSavings: typeof item.expectedSavings === 'number' 
+          ? `₹${item.expectedSavings.toLocaleString()}` 
+          : item.expectedSavings || '₹0',
+        progress: item.progressPercentage || item.progress || 0,
+        lastUpdated: item.updatedAt 
+          ? new Date(item.updatedAt).toLocaleDateString() 
+          : item.lastUpdated || new Date().toLocaleDateString(),
+        discipline: item.discipline || '',
+        submittedDate: item.createdAt 
+          ? new Date(item.createdAt).toLocaleDateString() 
+          : item.submittedDate || new Date().toLocaleDateString(),
+        description: item.description,
+        startDate: item.startDate,
+        endDate: item.endDate,
+        currentStage: item.currentStage,
+        requiresMoc: item.requiresMoc,
+        requiresCapex: item.requiresCapex,
+        createdByName: item.createdByName,
+        createdByEmail: item.createdByEmail
+      }));
+    }
+    return mockInitiatives;
+  }, [apiInitiatives]);
 
   // Filter initiatives
   const filteredInitiatives = initiatives.filter((initiative: Initiative) => {
@@ -59,7 +102,7 @@ export default function Initiatives({ user }: InitiativesProps) {
     const matchesSite = siteFilter === "all" || initiative.site === siteFilter;
     const matchesSearch = searchTerm === "" || 
       initiative.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (initiative.id && initiative.id.toLowerCase().includes(searchTerm.toLowerCase()));
+      (initiative.id && initiative.id.toString().toLowerCase().includes(searchTerm.toLowerCase()));
     
     return matchesStatus && matchesSite && matchesSearch;
   });
@@ -91,8 +134,9 @@ export default function Initiatives({ user }: InitiativesProps) {
     }
   };
 
-  const formatCurrency = (amount: string) => {
-    return amount.replace('₹', '₹ ');
+  const formatCurrency = (amount: string | number) => {
+    const amountStr = typeof amount === 'number' ? `₹${amount.toLocaleString()}` : amount.toString();
+    return amountStr.replace('₹', '₹ ');
   };
 
   return (

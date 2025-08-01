@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { AppLayout } from "./components/layout/AppLayout";
 import AuthPage from "./components/auth/AuthPage";
 import Dashboard from "./pages/Dashboard";
@@ -95,7 +96,9 @@ const AppRoutes = () => {
       <Route path="/" element={
         <ProtectedRoute>
           <AppLayout user={user!} onLogout={logout}>
-            <Dashboard user={user!} />
+            <ErrorBoundary>
+              <Dashboard user={user!} />
+            </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>
       } />
@@ -103,7 +106,9 @@ const AppRoutes = () => {
       <Route path="/initiative/new" element={
         <ProtectedRoute>
           <AppLayout user={user!} onLogout={logout}>
-            <InitiativeForm user={user!} />
+            <ErrorBoundary>
+              <InitiativeForm user={user!} />
+            </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>
       } />
@@ -111,7 +116,9 @@ const AppRoutes = () => {
       <Route path="/initiatives" element={
         <ProtectedRoute>
           <AppLayout user={user!} onLogout={logout}>
-            <Initiatives user={user!} />
+            <ErrorBoundary>
+              <Initiatives user={user!} />
+            </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>
       } />
@@ -119,7 +126,9 @@ const AppRoutes = () => {
       <Route path="/workflow" element={
         <ProtectedRoute>
           <AppLayout user={user!} onLogout={logout}>
-            <Workflow user={user!} />
+            <ErrorBoundary>
+              <Workflow user={user!} />
+            </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>
       } />
@@ -127,7 +136,9 @@ const AppRoutes = () => {
       <Route path="/timeline" element={
         <ProtectedRoute>
           <AppLayout user={user!} onLogout={logout}>
-            <Timeline user={user!} />
+            <ErrorBoundary>
+              <Timeline user={user!} />
+            </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>
       } />
@@ -135,7 +146,9 @@ const AppRoutes = () => {
       <Route path="/kpi" element={
         <ProtectedRoute>
           <AppLayout user={user!} onLogout={logout}>
-            <KPI user={user!} />
+            <ErrorBoundary>
+              <KPI user={user!} />
+            </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>
       } />
@@ -143,7 +156,9 @@ const AppRoutes = () => {
       <Route path="/reports" element={
         <ProtectedRoute>
           <AppLayout user={user!} onLogout={logout}>
-            <Reports user={user!} />
+            <ErrorBoundary>
+              <Reports user={user!} />
+            </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>
       } />
@@ -151,7 +166,9 @@ const AppRoutes = () => {
       <Route path="/teams" element={
         <ProtectedRoute>
           <AppLayout user={user!} onLogout={logout}>
-            <Teams user={user!} />
+            <ErrorBoundary>
+              <Teams user={user!} />
+            </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>
       } />
