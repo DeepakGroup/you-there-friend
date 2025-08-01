@@ -33,6 +33,7 @@ const App = () => {
   const handleLogin = (userData: any) => {
     // This is handled by the useAuth hook automatically
     // No need to reload - React will re-render when user state changes
+    console.log('Login handler called with:', userData);
   };
 
   if (isLoading) {

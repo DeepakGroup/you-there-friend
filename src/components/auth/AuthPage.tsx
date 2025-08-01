@@ -69,6 +69,8 @@ export default function AuthPage({ onLogin }: AuthProps) {
             title: "Login Successful",
             description: "Welcome back to OpEx Hub!",
           });
+          // Clear form data after successful login
+          setFormData(prev => ({ ...prev, password: '' }));
           // Navigation will happen automatically via App.tsx when user state changes
         } else {
           toast({
@@ -202,7 +204,7 @@ export default function AuthPage({ onLogin }: AuthProps) {
                   </div>
 
                    <p className="text-xs text-muted-foreground">
-                     Demo credentials: john.doe@company.com / password123
+                     Demo credentials: john.lead@company.com / password123
                    </p>
                 </TabsContent>
 

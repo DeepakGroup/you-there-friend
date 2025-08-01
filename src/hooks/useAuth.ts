@@ -32,33 +32,45 @@ export const useAuth = () => {
       const response = await authAPI.login(email, password);
       console.log('API Response:', response);
       
-      if (response.success) {
+      if (response.success && response.data) {
         const userData = {
-          id: response.data.user.id.toString(),
-          email: response.data.user.email,
-          fullName: response.data.user.fullName,
-          site: response.data.user.site,
-          discipline: response.data.user.discipline,
-          role: response.data.user.role,
-          roleName: response.data.user.roleName,
+          id: response.data.user.id ? response.data.user.id.toString() : '',
+          email: response.data.user.email || '',
+          fullName: response.data.user.fullName || '',
+          site: response.data.user.site || '',
+          discipline: response.data.user.discipline || '',
+          role: response.data.user.role || '',
+          roleName: response.data.user.roleName || '',
         };
         
         console.log('Setting user data:', userData);
-        setUser(userData);
+        
+        // Store data and update state immediately
         localStorage.setItem("opex_user", JSON.stringify(userData));
         localStorage.setItem("opex_token", response.data.token);
+        
+        // Update state immediately
+        setUser(userData);
         console.log('User state updated successfully');
         
         return { success: true };
       } else {
         console.log('Login failed:', response.message);
-        return { success: false, error: response.message };
+        return { success: false, error: response.message || 'Login failed' };
       }
     } catch (error: any) {
       console.error('Login error:', error);
+      let errorMessage = 'Login failed';
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       return { 
         success: false, 
-        error: error.response?.data?.message || 'Login failed' 
+        error: errorMessage
       };
     }
   };
