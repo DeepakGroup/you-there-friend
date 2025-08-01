@@ -68,7 +68,7 @@ export default function AuthPage({ onLogin }: AuthProps) {
             title: "Login Successful",
             description: "Welcome back to OpEx Hub!",
           });
-          // onLogin will be called automatically by useAuth hook
+          // Navigation will happen automatically via App.tsx when user state changes
         } else {
           toast({
             title: "Login Failed",

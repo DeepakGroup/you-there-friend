@@ -28,7 +28,9 @@ export const useAuth = () => {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('Starting login process...');
       const response = await authAPI.login(email, password);
+      console.log('API Response:', response);
       
       if (response.success) {
         const userData = {
@@ -41,15 +43,19 @@ export const useAuth = () => {
           roleName: response.data.user.roleName,
         };
         
+        console.log('Setting user data:', userData);
         setUser(userData);
         localStorage.setItem("opex_user", JSON.stringify(userData));
         localStorage.setItem("opex_token", response.data.token);
+        console.log('User state updated successfully');
         
         return { success: true };
       } else {
+        console.log('Login failed:', response.message);
         return { success: false, error: response.message };
       }
     } catch (error: any) {
+      console.error('Login error:', error);
       return { 
         success: false, 
         error: error.response?.data?.message || 'Login failed' 

@@ -27,10 +27,12 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const { user, isLoading, logout } = useAuth();
+  
+  console.log('App render - User:', user, 'isLoading:', isLoading);
 
   const handleLogin = (userData: any) => {
-    // This is handled by the useAuth hook now
-    window.location.reload(); // Refresh to pick up the new user
+    // This is handled by the useAuth hook automatically
+    // No need to reload - React will re-render when user state changes
   };
 
   if (isLoading) {

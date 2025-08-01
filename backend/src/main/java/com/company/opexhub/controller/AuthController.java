@@ -24,7 +24,18 @@ public class AuthController {
             // Create response with token and user data structured for frontend
             java.util.Map<String, Object> responseData = new java.util.HashMap<>();
             responseData.put("token", jwtResponse.getToken());
-            responseData.put("user", jwtResponse);
+            
+            // Create user object without token for frontend
+            java.util.Map<String, Object> userData = new java.util.HashMap<>();
+            userData.put("id", jwtResponse.getId());
+            userData.put("email", jwtResponse.getEmail());
+            userData.put("fullName", jwtResponse.getFullName());
+            userData.put("site", jwtResponse.getSite());
+            userData.put("discipline", jwtResponse.getDiscipline());
+            userData.put("role", jwtResponse.getRole());
+            userData.put("roleName", jwtResponse.getRoleName());
+            
+            responseData.put("user", userData);
             
             return ResponseEntity.ok(new ApiResponse(true, "Login successful", responseData));
         } catch (Exception e) {
