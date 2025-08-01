@@ -14,7 +14,7 @@ import KPI from "./pages/KPI";
 import Reports from "./pages/Reports";
 import Teams from "./pages/Teams";
 import NotFound from "./pages/NotFound";
-import { useAuth } from "./hooks/useAuth";
+import { useAuth } from "./hooks/useAuth.old";
 
 const queryClient = new QueryClient({
   defaultOptions: {

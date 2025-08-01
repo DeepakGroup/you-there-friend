@@ -18,8 +18,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { sites, disciplines, User } from "@/lib/mockData";
-import { initiativeAPI } from "@/lib/api";
-import { useMutation } from "@tanstack/react-query";
+import { useCreateInitiative } from "@/hooks/useInitiatives";
 
 interface InitiativeFormProps {
   user: User;
@@ -51,24 +50,7 @@ export default function InitiativeForm({ user }: InitiativeFormProps) {
   const [files, setFiles] = useState<File[]>([]);
   const { toast } = useToast();
 
-  const createInitiativeMutation = useMutation({
-    mutationFn: initiativeAPI.create,
-    onSuccess: (data) => {
-      toast({
-        title: "Initiative Submitted Successfully!",
-        description: `Initiative has been created and sent for approval.`,
-      });
-      form.reset();
-      setFiles([]);
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.response?.data?.message || "Failed to create initiative",
-        variant: "destructive"
-      });
-    }
-  });
+  const createInitiativeMutation = useCreateInitiative();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -97,7 +79,23 @@ export default function InitiativeForm({ user }: InitiativeFormProps) {
       requiresCapex: data.estimatedCapex > 0
     };
 
-    createInitiativeMutation.mutate(initiativeData);
+    createInitiativeMutation.mutate(initiativeData, {
+      onSuccess: (data) => {
+        toast({
+          title: "Initiative Submitted Successfully!",
+          description: `Initiative has been created and sent for approval.`,
+        });
+        form.reset();
+        setFiles([]);
+      },
+      onError: (error: any) => {
+        toast({
+          title: "Error",
+          description: error.response?.data?.message || "Failed to create initiative",
+          variant: "destructive"
+        });
+      }
+    });
   };
 
   const handleSaveDraft = () => {

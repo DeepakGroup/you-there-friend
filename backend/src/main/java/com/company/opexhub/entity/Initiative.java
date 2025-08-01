@@ -3,6 +3,7 @@ package com.company.opexhub.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,12 +75,15 @@ public class Initiative {
     private User createdBy;
 
     @OneToMany(mappedBy = "initiative", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference("initiative-timelineTasks")
     private Set<TimelineTask> timelineTasks = new HashSet<>();
 
     @OneToMany(mappedBy = "initiative", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference("initiative-comments")
     private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "initiative", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference("initiative-workflowStages")
     private Set<WorkflowStage> workflowStages = new HashSet<>();
 
     // Constructors

@@ -3,6 +3,7 @@ package com.company.opexhub.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.time.LocalDateTime;
 
 @Entity
@@ -43,6 +44,7 @@ public class WorkflowStage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiative_id", nullable = false)
+    @JsonBackReference("initiative-workflowStages")
     private Initiative initiative;
 
     // Constructors
