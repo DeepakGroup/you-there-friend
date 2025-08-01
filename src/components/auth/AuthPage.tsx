@@ -181,35 +181,37 @@ export default function AuthPage({ onLogin }: AuthProps) {
                   </p>
                 </TabsContent>
 
-                <TabsContent value="signup" className="space-y-4 mt-0">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name *</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="fullName"
-                        placeholder="John Doe"
-                        className="pl-10"
-                        value={formData.fullName}
-                        onChange={(e) => handleInputChange("fullName", e.target.value)}
-                        required={!isLogin}
-                      />
+                <TabsContent value="signup" className="space-y-3 mt-0">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName">Full Name *</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="fullName"
+                          placeholder="John Doe"
+                          className="pl-10"
+                          value={formData.fullName}
+                          onChange={(e) => handleInputChange("fullName", e.target.value)}
+                          required={!isLogin}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email *</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="john.doe@company.com"
-                        className="pl-10"
-                        value={formData.email}
-                        onChange={(e) => handleInputChange("email", e.target.value)}
-                        required
-                      />
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email *</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="john.doe@company.com"
+                          className="pl-10"
+                          value={formData.email}
+                          onChange={(e) => handleInputChange("email", e.target.value)}
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -229,12 +231,12 @@ export default function AuthPage({ onLogin }: AuthProps) {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-3">
                     <div className="space-y-2">
                       <Label htmlFor="site">Site *</Label>
                       <Select value={formData.site} onValueChange={(value) => handleInputChange("site", value)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select site" />
+                          <SelectValue placeholder="Site" />
                         </SelectTrigger>
                         <SelectContent>
                           {sites.map((site) => (
@@ -250,7 +252,7 @@ export default function AuthPage({ onLogin }: AuthProps) {
                       <Label htmlFor="discipline">Discipline *</Label>
                       <Select value={formData.discipline} onValueChange={(value) => handleInputChange("discipline", value)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select discipline" />
+                          <SelectValue placeholder="Discipline" />
                         </SelectTrigger>
                         <SelectContent>
                           {disciplines.map((discipline) => (
@@ -261,22 +263,22 @@ export default function AuthPage({ onLogin }: AuthProps) {
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Role *</Label>
-                    <Select value={formData.role} onValueChange={(value) => handleInputChange("role", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {roles.map((role) => (
-                          <SelectItem key={role.code} value={role.code}>
-                            {role.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="space-y-2">
+                      <Label htmlFor="role">Role *</Label>
+                      <Select value={formData.role} onValueChange={(value) => handleInputChange("role", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {roles.map((role) => (
+                            <SelectItem key={role.code} value={role.code}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </TabsContent>
 
