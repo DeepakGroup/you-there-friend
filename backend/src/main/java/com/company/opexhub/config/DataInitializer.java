@@ -25,37 +25,37 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeUsers() {
-        // Create demo users for testing
+        // Create demo users for testing - All users assigned to NDS site with Indian names
         User[] demoUsers = {
-            new User("John Smith", "john.lead@company.com", 
-                    passwordEncoder.encode("password123"), "LAM", "MECH", "INIT_LEAD", "Initiative Lead"),
+            new User("Rajesh Kumar", "rajesh.lead@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "MECH", "INIT_LEAD", "Initiative Lead"),
             
-            new User("Sarah Johnson", "sarah.approver@company.com", 
-                    passwordEncoder.encode("password123"), "LAM", "ELECT", "APPROVER", "Department Approver"),
+            new User("Priya Sharma", "priya.approver@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "ELECT", "APPROVER", "Department Approver"),
             
-            new User("Mike Wilson", "mike.tso@company.com", 
-                    passwordEncoder.encode("password123"), "LAM", "PROCESS", "SITE_TSO_LEAD", "Site TSO Lead"),
+            new User("Amit Patel", "amit.tso@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "PROCESS", "SITE_TSO_LEAD", "Site TSO Lead"),
             
-            new User("Lisa Brown", "lisa.corp@company.com", 
-                    passwordEncoder.encode("password123"), "Corporate", "OPEX", "CORP_TSO", "Corporate TSO"),
+            new User("Deepika Singh", "deepika.corp@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "OPEX", "CORP_TSO", "Corporate TSO"),
             
-            new User("Alex Davis", "alex.manager@company.com", 
-                    passwordEncoder.encode("password123"), "LAM", "MAINT", "SITE_MANAGER", "Site Manager"),
+            new User("Vikram Gupta", "vikram.manager@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "MAINT", "SITE_MANAGER", "Site Manager"),
             
-            new User("Emma Wilson", "emma.lead@company.com", 
+            new User("Neha Agarwal", "neha.lead@godeepak.com", 
                     passwordEncoder.encode("password123"), "NDS", "OP", "INIT_LEAD", "Initiative Lead"),
             
-            new User("David Brown", "david.approver@company.com", 
-                    passwordEncoder.encode("password123"), "HSD1", "EG", "APPROVER", "Department Approver"),
+            new User("Suresh Reddy", "suresh.approver@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "EG", "APPROVER", "Department Approver"),
             
-            new User("Sophie Davis", "sophie.tso@company.com", 
-                    passwordEncoder.encode("password123"), "HSD2", "EV", "SITE_TSO_LEAD", "Site TSO Lead"),
+            new User("Kavya Nair", "kavya.tso@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "EV", "SITE_TSO_LEAD", "Site TSO Lead"),
             
-            new User("James Miller", "james.corp@company.com", 
-                    passwordEncoder.encode("password123"), "Corporate", "SF", "CORP_TSO", "Corporate TSO"),
+            new User("Rohit Jain", "rohit.corp@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "SF", "CORP_TSO", "Corporate TSO"),
             
-            new User("Rachel Green", "rachel.manager@company.com", 
-                    passwordEncoder.encode("password123"), "DHJ", "QA", "SITE_MANAGER", "Site Manager")
+            new User("Ananya Verma", "ananya.manager@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "QA", "SITE_MANAGER", "Site Manager")
         };
 
         for (User user : demoUsers) {
@@ -63,12 +63,13 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         System.out.println("Demo users initialized successfully!");
-        System.out.println("=== LOGIN CREDENTIALS ===");
-        System.out.println("Email: john.lead@company.com | Password: password123 | Role: Initiative Lead");
-        System.out.println("Email: sarah.approver@company.com | Password: password123 | Role: Department Approver");
-        System.out.println("Email: mike.tso@company.com | Password: password123 | Role: Site TSO Lead");
-        System.out.println("Email: lisa.corp@company.com | Password: password123 | Role: Corporate TSO");
-        System.out.println("Email: alex.manager@company.com | Password: password123 | Role: Site Manager");
+        System.out.println("=== LOGIN CREDENTIALS (All NDS Site Users) ===");
+        System.out.println("Email: rajesh.lead@godeepak.com | Password: password123 | Role: Initiative Lead");
+        System.out.println("Email: priya.approver@godeepak.com | Password: password123 | Role: Department Approver");
+        System.out.println("Email: amit.tso@godeepak.com | Password: password123 | Role: Site TSO Lead");
+        System.out.println("Email: deepika.corp@godeepak.com | Password: password123 | Role: Corporate TSO");
+        System.out.println("Email: vikram.manager@godeepak.com | Password: password123 | Role: Site Manager");
+        System.out.println("Email: neha.lead@godeepak.com | Password: password123 | Role: Initiative Lead");
         System.out.println("========================");
     }
 }

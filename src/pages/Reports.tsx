@@ -148,7 +148,7 @@ export default function Reports({ user }: ReportsProps) {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalSavings.toLocaleString()}</div>
+            <div className="text-2xl font-bold">₹{totalSavings.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               Expected savings from all initiatives
             </p>
@@ -161,7 +161,7 @@ export default function Reports({ user }: ReportsProps) {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${avgSavingsPerInitiative.toLocaleString()}</div>
+            <div className="text-2xl font-bold">₹{avgSavingsPerInitiative.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               Average expected savings
             </p>
@@ -265,7 +265,7 @@ export default function Reports({ user }: ReportsProps) {
                       <TableCell>
                         {typeof initiative.expectedSavings === 'string' 
                           ? initiative.expectedSavings 
-                          : `$${initiative.expectedSavings?.toLocaleString() || 0}`
+                          : `₹${initiative.expectedSavings?.toLocaleString() || 0}`
                         }
                       </TableCell>
                       <TableCell>{initiative.submittedDate || 'N/A'}</TableCell>

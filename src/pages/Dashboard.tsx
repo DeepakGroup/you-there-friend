@@ -6,7 +6,7 @@ import {
   TrendingUp, 
   Target, 
   Clock, 
-  DollarSign,
+  IndianRupee,
   FileText,
   CheckCircle,
   AlertTriangle,
@@ -41,7 +41,7 @@ export default function Dashboard({ user }: DashboardProps) {
       value: "₹45.2L",
       change: "+28%",
       trend: "up",
-      icon: DollarSign,
+      icon: IndianRupee,
       color: "text-success"
     },
     {

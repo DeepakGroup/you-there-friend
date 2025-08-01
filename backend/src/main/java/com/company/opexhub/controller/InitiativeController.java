@@ -2,6 +2,7 @@ package com.company.opexhub.controller;
 
 import com.company.opexhub.dto.ApiResponse;
 import com.company.opexhub.dto.InitiativeRequest;
+import com.company.opexhub.dto.InitiativeResponse;
 import com.company.opexhub.entity.Initiative;
 import com.company.opexhub.security.UserPrincipal;
 import com.company.opexhub.service.InitiativeService;
@@ -42,7 +43,30 @@ public class InitiativeController {
                                             @AuthenticationPrincipal UserPrincipal currentUser) {
         try {
             Initiative initiative = initiativeService.createInitiative(request, currentUser.getId());
-            return ResponseEntity.ok(new ApiResponse(true, "Initiative created successfully", initiative));
+            
+            // Convert to response DTO to avoid serialization issues
+            InitiativeResponse response = new InitiativeResponse();
+            response.setId(initiative.getId());
+            response.setTitle(initiative.getTitle());
+            response.setDescription(initiative.getDescription());
+            response.setStatus(initiative.getStatus());
+            response.setPriority(initiative.getPriority());
+            response.setExpectedSavings(initiative.getExpectedSavings());
+            response.setActualSavings(initiative.getActualSavings());
+            response.setSite(initiative.getSite());
+            response.setDiscipline(initiative.getDiscipline());
+            response.setStartDate(initiative.getStartDate());
+            response.setEndDate(initiative.getEndDate());
+            response.setProgressPercentage(initiative.getProgressPercentage());
+            response.setCurrentStage(initiative.getCurrentStage());
+            response.setRequiresMoc(initiative.getRequiresMoc());
+            response.setRequiresCapex(initiative.getRequiresCapex());
+            response.setCreatedAt(initiative.getCreatedAt());
+            response.setUpdatedAt(initiative.getUpdatedAt());
+            response.setCreatedByName(initiative.getCreatedBy().getFullName());
+            response.setCreatedByEmail(initiative.getCreatedBy().getEmail());
+            
+            return ResponseEntity.ok(new ApiResponse(true, "Initiative created successfully", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse(false, e.getMessage()));

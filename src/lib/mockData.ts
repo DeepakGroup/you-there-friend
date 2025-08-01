@@ -64,8 +64,8 @@ export interface Comment {
 export const mockUsers: User[] = [
   {
     id: "1",
-    email: "john.lead@company.com",
-    fullName: "John Smith",
+    email: "rajesh.lead@godeepak.com",
+    fullName: "Rajesh Kumar",
     site: "NDS",
     discipline: "OP",
     role: "INIT_LEAD",
@@ -73,27 +73,27 @@ export const mockUsers: User[] = [
   },
   {
     id: "2",
-    email: "jane.smith@company.com",
-    fullName: "Jane Smith",
-    site: "HSD1",
+    email: "priya.approver@godeepak.com",
+    fullName: "Priya Sharma",
+    site: "NDS",
     discipline: "EG",
     role: "APPROVER",
     roleName: "Approver"
   },
   {
     id: "3",
-    email: "mike.wilson@company.com",
-    fullName: "Mike Wilson",
-    site: "APL",
+    email: "amit.tso@godeepak.com",
+    fullName: "Amit Patel",
+    site: "NDS",
     discipline: "QA",
     role: "SITE_TSO_LEAD",
     roleName: "Site TSO Lead"
   },
   {
     id: "4",
-    email: "sarah.safety@company.com",
-    fullName: "Sarah Johnson",
-    site: "DHJ",
+    email: "deepika.corp@godeepak.com",
+    fullName: "Deepika Singh",
+    site: "NDS",
     discipline: "SF",
     role: "CORP_TSO",
     roleName: "Corp TSO"
