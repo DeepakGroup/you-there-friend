@@ -17,6 +17,20 @@ import {
   Search
 } from "lucide-react";
 import { mockInitiatives, paginateArray, User } from "@/lib/mockData";
+import { useInitiatives } from "@/hooks/useInitiatives";
+
+interface Initiative {
+  id: string;
+  title: string;
+  site: string;
+  status: string;
+  priority: string;
+  expectedSavings: string;
+  progress: number;
+  lastUpdated: string;
+  discipline: string;
+  submittedDate: string;
+}
 
 interface InitiativesProps {
   user: User;
@@ -29,13 +43,23 @@ export default function Initiatives({ user }: InitiativesProps) {
   const [siteFilter, setSiteFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Use real API or fallback to mock data
+  const { data: apiInitiatives, isLoading, error } = useInitiatives({
+    status: statusFilter !== "all" ? statusFilter : undefined,
+    site: siteFilter !== "all" ? siteFilter : undefined,
+    search: searchTerm || undefined,
+  });
+
+  // Use API data if available, otherwise fallback to mock data
+  const initiatives = apiInitiatives?.content || mockInitiatives;
+
   // Filter initiatives
-  const filteredInitiatives = mockInitiatives.filter(initiative => {
+  const filteredInitiatives = initiatives.filter((initiative: Initiative) => {
     const matchesStatus = statusFilter === "all" || initiative.status.toLowerCase().includes(statusFilter);
     const matchesSite = siteFilter === "all" || initiative.site === siteFilter;
     const matchesSearch = searchTerm === "" || 
       initiative.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      initiative.id.toLowerCase().includes(searchTerm.toLowerCase());
+      (initiative.id && initiative.id.toLowerCase().includes(searchTerm.toLowerCase()));
     
     return matchesStatus && matchesSite && matchesSearch;
   });
@@ -179,7 +203,7 @@ export default function Initiatives({ user }: InitiativesProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedData.data.map((initiative) => (
+                {paginatedData.data.map((initiative: Initiative) => (
                   <TableRow key={initiative.id} className="hover:bg-muted/50">
                     <TableCell>
                       <Badge variant="outline" className="font-mono text-xs">
@@ -310,7 +334,7 @@ export default function Initiatives({ user }: InitiativesProps) {
               <div>
                 <p className="text-sm font-medium">In Progress</p>
                 <p className="text-2xl font-bold text-warning">
-                  {filteredInitiatives.filter(i => i.status.toLowerCase().includes('progress')).length}
+                  {filteredInitiatives.filter((i: Initiative) => i.status.toLowerCase().includes('progress')).length}
                 </p>
               </div>
             </div>
@@ -324,7 +348,7 @@ export default function Initiatives({ user }: InitiativesProps) {
               <div>
                 <p className="text-sm font-medium">Under Review</p>
                 <p className="text-2xl font-bold text-primary">
-                  {filteredInitiatives.filter(i => i.status.toLowerCase().includes('review')).length}
+                  {filteredInitiatives.filter((i: Initiative) => i.status.toLowerCase().includes('review')).length}
                 </p>
               </div>
             </div>
@@ -338,7 +362,7 @@ export default function Initiatives({ user }: InitiativesProps) {
               <div>
                 <p className="text-sm font-medium">This Month</p>
                 <p className="text-2xl font-bold text-success">
-                  {filteredInitiatives.filter(i => i.submittedDate.includes('2025-01')).length}
+                  {filteredInitiatives.filter((i: Initiative) => i.submittedDate?.includes('2025-01')).length}
                 </p>
               </div>
             </div>
@@ -352,7 +376,7 @@ export default function Initiatives({ user }: InitiativesProps) {
               <div>
                 <p className="text-sm font-medium">High Priority</p>
                 <p className="text-2xl font-bold text-destructive">
-                  {filteredInitiatives.filter(i => i.priority === 'High').length}
+                  {filteredInitiatives.filter((i: Initiative) => i.priority === 'High').length}
                 </p>
               </div>
             </div>
