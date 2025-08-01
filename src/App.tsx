@@ -28,7 +28,7 @@ const queryClient = new QueryClient({
 const App = () => {
   const { user, isLoading, logout } = useAuth();
   
-  console.log('App render - User:', user, 'isLoading:', isLoading);
+  console.log('App render - User:', user, 'isLoading:', isLoading, 'User is authenticated:', !!user);
 
   const handleLogin = (userData: any) => {
     // This is handled by the useAuth hook automatically
