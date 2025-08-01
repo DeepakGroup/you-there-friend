@@ -24,9 +24,9 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(allowedOrigins.split(","))
+                        .allowedOriginPatterns("*")
                         .allowedMethods(allowedMethods.split(","))
-                        .allowedHeaders(allowedHeaders.split(","))
+                        .allowedHeaders("*")
                         .allowCredentials(true);
             }
         };

@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8090
   servlet:
     context-path: /api
 
@@ -42,6 +42,6 @@ jwt:
   expiration: 86400000 # 24 hours
 
 cors:
-  allowed-origins: http://localhost:5173,http://localhost:3000,http://localhost:8080
+  allowed-origins: http://localhost:8080,http://localhost:5173,http://localhost:3000
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
   allowed-headers: "*"
