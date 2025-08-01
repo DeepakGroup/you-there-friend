@@ -55,13 +55,22 @@ export default function InitiativeForm({ user }: InitiativeFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      initiatorName: user.fullName,
-      site: user.site,
+      title: "",
+      description: "",
+      initiatorName: user.fullName || "",
+      site: user.site || "",
+      discipline: "",
+      date: new Date(),
+      baselineData: "",
+      targetOutcome: "",
       isBudgeted: false,
       confidenceLevel: 80,
       targetValue: 0,
       expectedValue: 0,
       estimatedCapex: 0,
+      assumption1: "",
+      assumption2: "",
+      assumption3: "",
     },
   });
 
