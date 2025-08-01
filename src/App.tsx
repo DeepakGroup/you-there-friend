@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { AppLayout } from "./components/layout/AppLayout";
 import AuthPage from "./components/auth/AuthPage";
 import Dashboard from "./pages/Dashboard";
@@ -14,7 +15,6 @@ import KPI from "./pages/KPI";
 import Reports from "./pages/Reports";
 import Teams from "./pages/Teams";
 import NotFound from "./pages/NotFound";
-import { useAuth } from "./hooks/useAuth";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,21 +25,12 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => {
-  const { user, isLoading, logout } = useAuth();
+// Protected Route Component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, isLoading } = useAuth();
   
-  console.log('=== App render ===');
-  console.log('User:', user);
-  console.log('isLoading:', isLoading);
-  console.log('User is authenticated:', !!user);
-  console.log('==================');
-
-  const handleLogin = (userData: any) => {
-    // This is handled by the useAuth hook automatically
-    // No need to reload - React will re-render when user state changes
-    console.log('App.tsx - Login handler called with:', userData);
-  };
-
+  console.log('ProtectedRoute - User:', user, 'isLoading:', isLoading);
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -50,38 +41,136 @@ const App = () => {
       </div>
     );
   }
-
+  
   if (!user) {
+    console.log('ProtectedRoute: No user, redirecting to auth');
+    return <Navigate to="/auth" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Public Route Component (for auth page)
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, isLoading } = useAuth();
+  
+  console.log('PublicRoute - User:', user, 'isLoading:', isLoading);
+  
+  if (isLoading) {
     return (
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <AuthPage onLogin={handleLogin} />
-        </TooltipProvider>
-      </QueryClientProvider>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading OpEx Hub...</p>
+        </div>
+      </div>
     );
   }
+  
+  if (user) {
+    console.log('PublicRoute: User exists, redirecting to dashboard');
+    return <Navigate to="/" replace />;
+  }
+  
+  return <>{children}</>;
+};
 
+// Main App Layout Component
+const AppRoutes = () => {
+  const { user, logout } = useAuth();
+  
+  return (
+    <Routes>
+      {/* Public route - Auth page */}
+      <Route 
+        path="/auth" 
+        element={
+          <PublicRoute>
+            <AuthPage onLogin={() => {}} />
+          </PublicRoute>
+        } 
+      />
+      
+      {/* Protected routes - Main app */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <Dashboard user={user!} />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/initiative/new" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <InitiativeForm user={user!} />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/initiatives" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <Initiatives user={user!} />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/workflow" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <Workflow user={user!} />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/timeline" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <Timeline user={user!} />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/kpi" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <KPI user={user!} />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/reports" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <Reports user={user!} />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/teams" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <Teams user={user!} />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AppLayout user={user} onLogout={logout}>
-            <Routes>
-              <Route path="/" element={<Dashboard user={user} />} />
-              <Route path="/initiative/new" element={<InitiativeForm user={user} />} />
-              <Route path="/initiatives" element={<Initiatives user={user} />} />
-              <Route path="/workflow" element={<Workflow user={user} />} />
-              <Route path="/timeline" element={<Timeline user={user} />} />
-              <Route path="/kpi" element={<KPI user={user} />} />
-              <Route path="/reports" element={<Reports user={user} />} />
-              <Route path="/teams" element={<Teams user={user} />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AppLayout>
+          <AuthProvider>
+            <AppRoutes />
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
