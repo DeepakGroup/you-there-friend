@@ -98,7 +98,7 @@ export default function Dashboard({ user }: DashboardProps) {
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back, {user.fullName}! Monitor your operational excellence initiatives</p>
         </div>
-        <Button onClick={() => navigate('/new-initiative')} className="gap-2">
+        <Button onClick={() => navigate('/initiative/new')} className="gap-2">
           <Plus className="h-4 w-4" />
           New Initiative
         </Button>
@@ -194,7 +194,7 @@ export default function Dashboard({ user }: DashboardProps) {
             <Button 
               variant="outline" 
               className="w-full justify-start gap-2 h-12"
-              onClick={() => navigate('/new-initiative')}
+              onClick={() => navigate('/initiative/new')}
             >
               <Plus className="h-4 w-4" />
               Submit New Initiative

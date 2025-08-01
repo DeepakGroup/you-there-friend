@@ -64,6 +64,7 @@ export default function AuthPage({ onLogin }: AuthProps) {
         const result = await login(formData.email, formData.password);
         
         if (result.success) {
+          console.log('Login successful in AuthPage');
           toast({
             title: "Login Successful",
             description: "Welcome back to OpEx Hub!",
