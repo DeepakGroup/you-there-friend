@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/comments")
+@CrossOrigin(origins = "*")
 public class CommentController {
 
     @Autowired

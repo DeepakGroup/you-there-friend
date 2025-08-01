@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/timeline-tasks")
+@CrossOrigin(origins = "*")
 public class TimelineTaskController {
 
     @Autowired
