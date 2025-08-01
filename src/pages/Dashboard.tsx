@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockInitiatives, User } from "@/lib/mockData";
+import { useInitiatives } from "@/hooks/useInitiatives";
 
 interface DashboardProps {
   user: User;
@@ -21,6 +22,10 @@ interface DashboardProps {
 
 export default function Dashboard({ user }: DashboardProps) {
   const navigate = useNavigate();
+  const { data: initiativesData } = useInitiatives();
+  
+  // Use API data if available, otherwise fallback to mock
+  const initiatives = initiativesData?.content || mockInitiatives;
 
   const stats = [
     {
@@ -93,7 +98,7 @@ export default function Dashboard({ user }: DashboardProps) {
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back, {user.fullName}! Monitor your operational excellence initiatives</p>
         </div>
-        <Button onClick={() => navigate('/initiative/new')} className="gap-2">
+        <Button onClick={() => navigate('/new-initiative')} className="gap-2">
           <Plus className="h-4 w-4" />
           New Initiative
         </Button>
@@ -189,7 +194,7 @@ export default function Dashboard({ user }: DashboardProps) {
             <Button 
               variant="outline" 
               className="w-full justify-start gap-2 h-12"
-              onClick={() => navigate('/initiative/new')}
+              onClick={() => navigate('/new-initiative')}
             >
               <Plus className="h-4 w-4" />
               Submit New Initiative

@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, User, Lock, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const sites = [
   { code: "NDS", name: "NDS" },
@@ -49,54 +50,77 @@ export default function AuthPage({ onLogin }: AuthProps) {
     discipline: "",
     role: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { login, register } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    if (isLogin) {
-      // Mock login
-      const mockUser = {
-        id: "1",
-        email: formData.email,
-        fullName: "John Doe",
-        site: "NDS",
-        discipline: "OP",
-        role: "INIT_LEAD",
-        roleName: "Initiative Lead"
-      };
-      
-      onLogin(mockUser);
-      toast({
-        title: "Login Successful",
-        description: `Welcome back, ${mockUser.fullName}!`,
-      });
-    } else {
-      // Mock signup
-      if (!formData.fullName || !formData.site || !formData.discipline || !formData.role) {
-        toast({
-          title: "Signup Failed",
-          description: "Please fill in all required fields.",
-          variant: "destructive"
-        });
-        return;
+    try {
+      if (isLogin) {
+        // Real API login
+        const result = await login(formData.email, formData.password);
+        
+        if (result.success) {
+          toast({
+            title: "Login Successful",
+            description: "Welcome back to OpEx Hub!",
+          });
+          // onLogin will be called automatically by useAuth hook
+        } else {
+          toast({
+            title: "Login Failed",
+            description: result.error || "Invalid credentials",
+            variant: "destructive"
+          });
+        }
+      } else {
+        // Real API signup
+        if (!formData.fullName || !formData.site || !formData.discipline || !formData.role) {
+          toast({
+            title: "Signup Failed",
+            description: "Please fill in all required fields.",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        const userData = {
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+          site: formData.site,
+          discipline: formData.discipline,
+          role: formData.role,
+          roleName: roles.find(r => r.code === formData.role)?.name || ""
+        };
+
+        const result = await register(userData);
+        
+        if (result.success) {
+          toast({
+            title: "Signup Successful",
+            description: "Account created successfully! Please sign in.",
+          });
+          setIsLogin(true); // Switch to login tab
+        } else {
+          toast({
+            title: "Signup Failed",
+            description: result.error || "Registration failed",
+            variant: "destructive"
+          });
+        }
       }
-
-      const mockUser = {
-        id: "2",
-        email: formData.email,
-        fullName: formData.fullName,
-        site: formData.site,
-        discipline: formData.discipline,
-        role: formData.role,
-        roleName: roles.find(r => r.code === formData.role)?.name || ""
-      };
-
-      onLogin(mockUser);
+    } catch (error) {
       toast({
-        title: "Signup Successful",
-        description: `Account created successfully! Welcome, ${mockUser.fullName}!`,
+        title: isLogin ? "Login Failed" : "Signup Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -176,9 +200,9 @@ export default function AuthPage({ onLogin }: AuthProps) {
                     </div>
                   </div>
 
-                  <p className="text-xs text-muted-foreground">
-                    Demo: Use any email and password to login
-                  </p>
+                   <p className="text-xs text-muted-foreground">
+                     Demo credentials: john.doe@company.com / password123
+                   </p>
                 </TabsContent>
 
                 <TabsContent value="signup" className="space-y-3 mt-0">
@@ -282,8 +306,8 @@ export default function AuthPage({ onLogin }: AuthProps) {
                   </div>
                 </TabsContent>
 
-                <Button type="submit" className="w-full">
-                  {isLogin ? "Sign In" : "Create Account"}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Please wait..." : (isLogin ? "Sign In" : "Create Account")}
                 </Button>
               </form>
             </Tabs>

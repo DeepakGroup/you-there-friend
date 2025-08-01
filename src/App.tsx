@@ -65,7 +65,7 @@ const App = () => {
           <AppLayout user={user} onLogout={logout}>
             <Routes>
               <Route path="/" element={<Dashboard user={user} />} />
-              <Route path="/initiative/new" element={<InitiativeForm user={user} />} />
+              <Route path="/new-initiative" element={<InitiativeForm user={user} />} />
               <Route path="/initiatives" element={<Initiatives user={user} />} />
               <Route path="/workflow" element={<Workflow user={user} />} />
               <Route path="/timeline" element={<Timeline user={user} />} />

@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { sites, disciplines, User } from "@/lib/mockData";
+import { initiativeAPI } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
 
 interface InitiativeFormProps {
   user: User;
@@ -49,6 +51,25 @@ export default function InitiativeForm({ user }: InitiativeFormProps) {
   const [files, setFiles] = useState<File[]>([]);
   const { toast } = useToast();
 
+  const createInitiativeMutation = useMutation({
+    mutationFn: initiativeAPI.create,
+    onSuccess: (data) => {
+      toast({
+        title: "Initiative Submitted Successfully!",
+        description: `Initiative has been created and sent for approval.`,
+      });
+      form.reset();
+      setFiles([]);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to create initiative",
+        variant: "destructive"
+      });
+    }
+  });
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,21 +84,20 @@ export default function InitiativeForm({ user }: InitiativeFormProps) {
   });
 
   const onSubmit = (data: FormData) => {
-    // Generate initiative ID
-    const selectedSite = sites.find(s => s.code === data.site);
-    const selectedDiscipline = disciplines.find(d => d.code === data.discipline);
-    const year = new Date().getFullYear().toString().slice(-2);
-    const categorySeq = "AB"; // Mock category sequence
-    const siteSeq = "001"; // Mock site sequence
-    
-    const initiativeId = `${selectedSite?.code}/${year}/${selectedDiscipline?.code}/${categorySeq}/${siteSeq}`;
+    const initiativeData = {
+      title: data.title,
+      description: data.description,
+      priority: "Medium", // Default priority
+      expectedSavings: data.expectedValue,
+      site: data.site,
+      discipline: data.discipline,
+      startDate: data.date.toISOString().split('T')[0],
+      endDate: new Date(data.date.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 year from start
+      requiresMoc: data.estimatedCapex > 10, // MOC required if CAPEX > 10 lakhs
+      requiresCapex: data.estimatedCapex > 0
+    };
 
-    console.log("Form Data:", { ...data, files, initiativeId });
-    
-    toast({
-      title: "Initiative Submitted Successfully!",
-      description: `Initiative ID: ${initiativeId} has been created and sent for approval.`,
-    });
+    createInitiativeMutation.mutate(initiativeData);
   };
 
   const handleSaveDraft = () => {
