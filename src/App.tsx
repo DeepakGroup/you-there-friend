@@ -28,11 +28,16 @@ const queryClient = new QueryClient({
 const App = () => {
   const { user, isLoading, logout } = useAuth();
   
-  console.log('App render - User:', user, 'isLoading:', isLoading, 'User is authenticated:', !!user);
+  console.log('=== App render ===');
+  console.log('User:', user);
+  console.log('isLoading:', isLoading);
+  console.log('User is authenticated:', !!user);
+  console.log('==================');
 
   const handleLogin = (userData: any) => {
     // This is handled by the useAuth hook automatically
     // No need to reload - React will re-render when user state changes
+    console.log('App.tsx - Login handler called with:', userData);
   };
 
   if (isLoading) {
