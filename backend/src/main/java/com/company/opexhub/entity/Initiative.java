@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -94,7 +95,7 @@ public class Initiative {
                      String site, String discipline, LocalDate startDate, LocalDate endDate, User createdBy) {
         this.title = title;
         this.description = description;
-        this.status = "Draft";
+        this.status = "Pending";
         this.priority = priority;
         this.expectedSavings = expectedSavings;
         this.site = site;

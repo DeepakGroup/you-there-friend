@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { CalendarIcon, Upload, FileText, Save, Send } from "lucide-react";
+import { CalendarIcon, Upload, FileText, Send } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -107,12 +107,6 @@ export default function InitiativeForm({ user }: InitiativeFormProps) {
     });
   };
 
-  const handleSaveDraft = () => {
-    toast({
-      title: "Draft Saved",
-      description: "Your initiative has been saved as a draft.",
-    });
-  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -550,11 +544,7 @@ export default function InitiativeForm({ user }: InitiativeFormProps) {
           </Card>
 
           {/* Form Actions */}
-          <div className="flex gap-4 justify-end">
-            <Button type="button" variant="outline" onClick={handleSaveDraft}>
-              <Save className="h-4 w-4 mr-2" />
-              Save Draft
-            </Button>
+          <div className="flex justify-end">
             <Button type="submit">
               <Send className="h-4 w-4 mr-2" />
               Submit for Approval
