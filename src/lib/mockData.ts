@@ -64,8 +64,8 @@ export interface Comment {
 export const mockUsers: User[] = [
   {
     id: "1",
-    email: "john.doe@company.com",
-    fullName: "John Doe",
+    email: "john.lead@company.com",
+    fullName: "John Smith",
     site: "NDS",
     discipline: "OP",
     role: "INIT_LEAD",
@@ -88,6 +88,24 @@ export const mockUsers: User[] = [
     discipline: "QA",
     role: "SITE_TSO_LEAD",
     roleName: "Site TSO Lead"
+  },
+  {
+    id: "4",
+    email: "sarah.safety@company.com",
+    fullName: "Sarah Johnson",
+    site: "DHJ",
+    discipline: "SF",
+    role: "CORP_TSO",
+    roleName: "Corp TSO"
+  },
+  {
+    id: "5",
+    email: "david.env@company.com",
+    fullName: "David Chen",
+    site: "TCD",
+    discipline: "EV",
+    role: "INIT_LEAD",
+    roleName: "Initiative Lead"
   }
 ];
 
@@ -396,6 +414,7 @@ export const workflowStages = [
   { stage: 14, name: "Savings Validation with F&A", role: "SITE_CORP_TSO", roleName: "Site TSO Lead & Corp TSO" },
   { stage: 15, name: "Initiative Closure", role: "SITE_TSO_LEAD", roleName: "Site TSO Lead" }
 ];
+
 
 export const sites = [
   { code: "NDS", name: "NDS" },

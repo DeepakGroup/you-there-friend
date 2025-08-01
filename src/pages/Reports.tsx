@@ -17,7 +17,10 @@ interface ReportsProps {
 export default function Reports({ user }: ReportsProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('monthly');
   const [selectedSite, setSelectedSite] = useState<string>('all');
-  const { data: initiatives = [], isLoading } = useInitiatives();
+  const { data: initiativesData, isLoading } = useInitiatives();
+  
+  // Handle both API response format and mock data format
+  const initiatives = initiativesData?.content || initiativesData || [];
 
   if (isLoading) {
     return <div className="p-6">Loading reports data...</div>;
@@ -42,7 +45,12 @@ export default function Reports({ user }: ReportsProps) {
   ];
 
   // Calculate summary statistics
-  const totalSavings = filteredInitiatives.reduce((sum: number, i: any) => sum + (i.expectedSavings || 0), 0);
+  const totalSavings = filteredInitiatives.reduce((sum: number, i: any) => {
+    const savings = typeof i.expectedSavings === 'string' 
+      ? parseFloat(i.expectedSavings.replace(/[₹L,]/g, '')) || 0
+      : i.expectedSavings || 0;
+    return sum + savings;
+  }, 0);
   const completedCount = filteredInitiatives.filter((i: any) => i.status === 'Completed').length;
   const inProgressCount = filteredInitiatives.filter((i: any) => i.status === 'In Progress').length;
   const avgSavingsPerInitiative = filteredInitiatives.length > 0 ? totalSavings / filteredInitiatives.length : 0;
@@ -254,8 +262,13 @@ export default function Reports({ user }: ReportsProps) {
                           {initiative.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>${initiative.expectedSavings?.toLocaleString() || 0}</TableCell>
-                      <TableCell>{new Date(initiative.startDate).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        {typeof initiative.expectedSavings === 'string' 
+                          ? initiative.expectedSavings 
+                          : `$${initiative.expectedSavings?.toLocaleString() || 0}`
+                        }
+                      </TableCell>
+                      <TableCell>{initiative.submittedDate || 'N/A'}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

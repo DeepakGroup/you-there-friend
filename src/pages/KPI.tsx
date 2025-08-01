@@ -12,7 +12,10 @@ interface KPIProps {
 }
 
 export default function KPI({ user }: KPIProps) {
-  const { data: initiatives = [], isLoading } = useInitiatives();
+  const { data: initiativesData, isLoading } = useInitiatives();
+  
+  // Handle both API response format and mock data format
+  const initiatives = initiativesData?.content || initiativesData || [];
 
   if (isLoading) {
     return <div className="p-6">Loading KPI data...</div>;
@@ -23,10 +26,21 @@ export default function KPI({ user }: KPIProps) {
   const completedInitiatives = initiatives.filter((i: any) => i.status === 'Completed').length;
   const inProgressInitiatives = initiatives.filter((i: any) => i.status === 'In Progress').length;
   const rejectedInitiatives = initiatives.filter((i: any) => i.status === 'Rejected').length;
-  const totalExpectedSavings = initiatives.reduce((sum: number, i: any) => sum + (i.expectedSavings || 0), 0);
+  const totalExpectedSavings = initiatives.reduce((sum: number, i: any) => {
+    // Handle both string format (₹8.5L) and number format
+    const savings = typeof i.expectedSavings === 'string' 
+      ? parseFloat(i.expectedSavings.replace(/[₹L,]/g, '')) || 0
+      : i.expectedSavings || 0;
+    return sum + savings;
+  }, 0);
   const completedSavings = initiatives
     .filter((i: any) => i.status === 'Completed')
-    .reduce((sum: number, i: any) => sum + (i.expectedSavings || 0), 0);
+    .reduce((sum: number, i: any) => {
+      const savings = typeof i.expectedSavings === 'string' 
+        ? parseFloat(i.expectedSavings.replace(/[₹L,]/g, '')) || 0
+        : i.expectedSavings || 0;
+      return sum + savings;
+    }, 0);
 
   const completionRate = totalInitiatives > 0 ? (completedInitiatives / totalInitiatives) * 100 : 0;
   const savingsRealizationRate = totalExpectedSavings > 0 ? (completedSavings / totalExpectedSavings) * 100 : 0;

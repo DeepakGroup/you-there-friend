@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { User } from "@/lib/mockData";
 import { useInitiatives } from "@/hooks/useInitiatives";
-import { useWorkflowStages, usePendingApprovals } from "@/hooks/useWorkflow";
+import { useWorkflowStages, usePendingApprovals, useApproveStage, useRejectStage } from "@/hooks/useWorkflowStages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, XCircle, Clock, User as UserIcon } from "lucide-react";
-import { workflowAPI } from "@/lib/api";
+
 import { useToast } from "@/hooks/use-toast";
 
 interface WorkflowProps {
@@ -21,30 +21,45 @@ export default function Workflow({ user }: WorkflowProps) {
   const [comments, setComments] = useState<{ [key: number]: string }>({});
   const { toast } = useToast();
   
-  const { data: initiatives = [] } = useInitiatives();
+  const { data: initiativesData } = useInitiatives();
   const { data: workflowStages = [], refetch: refetchStages } = useWorkflowStages(selectedInitiative || 0);
   const { data: pendingApprovals = [] } = usePendingApprovals(Number(user.id));
+  const approveStage = useApproveStage();
+  const rejectStage = useRejectStage();
+  
+  // Handle both API response format and mock data format
+  const initiatives = initiativesData?.content || initiativesData || [];
 
-  const handleApprove = async (stageId: number) => {
-    try {
-      await workflowAPI.approveStage(stageId, comments[stageId] || '');
-      toast({ title: "Stage approved successfully" });
-      refetchStages();
-      setComments(prev => ({ ...prev, [stageId]: '' }));
-    } catch (error) {
-      toast({ title: "Error approving stage", variant: "destructive" });
-    }
+  const handleApprove = (stageId: number) => {
+    approveStage.mutate(
+      { stageId, comments: comments[stageId] || '' },
+      {
+        onSuccess: () => {
+          toast({ title: "Stage approved successfully" });
+          refetchStages();
+          setComments(prev => ({ ...prev, [stageId]: '' }));
+        },
+        onError: () => {
+          toast({ title: "Error approving stage", variant: "destructive" });
+        }
+      }
+    );
   };
 
-  const handleReject = async (stageId: number) => {
-    try {
-      await workflowAPI.rejectStage(stageId, comments[stageId] || 'Rejected');
-      toast({ title: "Stage rejected" });
-      refetchStages();
-      setComments(prev => ({ ...prev, [stageId]: '' }));
-    } catch (error) {
-      toast({ title: "Error rejecting stage", variant: "destructive" });
-    }
+  const handleReject = (stageId: number) => {
+    rejectStage.mutate(
+      { stageId, comments: comments[stageId] || 'Rejected' },
+      {
+        onSuccess: () => {
+          toast({ title: "Stage rejected" });
+          refetchStages();
+          setComments(prev => ({ ...prev, [stageId]: '' }));
+        },
+        onError: () => {
+          toast({ title: "Error rejecting stage", variant: "destructive" });
+        }
+      }
+    );
   };
 
   const getStatusIcon = (status: string) => {

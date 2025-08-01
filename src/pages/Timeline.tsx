@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { User } from "@/lib/mockData";
 import { useInitiatives } from "@/hooks/useInitiatives";
-import { useTimelineTasks, useUpdateTaskProgress } from "@/hooks/useTimeline";
+import { useTimelineTasks, useUpdateTaskProgress } from "@/hooks/useTimelineTasks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -15,9 +15,12 @@ interface TimelineProps {
 
 export default function Timeline({ user }: TimelineProps) {
   const [selectedInitiative, setSelectedInitiative] = useState<number | null>(null);
-  const { data: initiatives = [], isLoading: initiativesLoading } = useInitiatives();
+  const { data: initiativesData, isLoading: initiativesLoading } = useInitiatives();
   const { data: timelineTasks = [], isLoading: tasksLoading } = useTimelineTasks(selectedInitiative || 0);
   const updateProgressMutation = useUpdateTaskProgress();
+  
+  // Handle both API response format and mock data format
+  const initiatives = initiativesData?.content || initiativesData || [];
 
   const handleProgressUpdate = (taskId: number, progress: number) => {
     updateProgressMutation.mutate({ id: taskId, progress });
