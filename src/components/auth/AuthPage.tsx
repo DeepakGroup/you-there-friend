@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, User, Lock, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 const sites = [
   { code: "NDS", name: "NDS" },
@@ -66,7 +66,7 @@ export default function AuthPage({ onLogin }: AuthProps) {
         console.log('Login result:', result);
         
         if (result.success) {
-          console.log('Login successful in AuthPage - user should be updated');
+          console.log('AuthPage: Login successful - navigation should happen automatically');
           toast({
             title: "Login Successful",
             description: "Welcome back to OpEx Hub!",
@@ -74,12 +74,7 @@ export default function AuthPage({ onLogin }: AuthProps) {
           // Clear form data after successful login
           setFormData(prev => ({ ...prev, password: '' }));
           
-          // Call onLogin callback to notify parent
-          if (result.user) {
-            onLogin(result.user);
-          }
-          
-          // Navigation will happen automatically via App.tsx when user state changes
+          // Navigation happens automatically in AuthContext via useNavigate
         } else {
           console.log('Login failed with error:', result.error);
           toast({
