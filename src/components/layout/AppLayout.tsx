@@ -1,14 +1,28 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Search, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+
+interface User {
+  id: string;
+  email: string;
+  fullName: string;
+  site: string;
+  discipline: string;
+  role: string;
+  roleName: string;
+}
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  user: User;
+  onLogout: () => void;
 }
 
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -35,9 +49,36 @@ export function AppLayout({ children }: AppLayoutProps) {
                   3
                 </span>
               </Button>
-              <Button variant="ghost" size="icon">
-                <User className="h-4 w-4" />
-              </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-2 px-3">
+                    <User className="h-4 w-4" />
+                    <div className="hidden md:flex flex-col items-start">
+                      <span className="text-sm font-medium">{user.fullName}</span>
+                      <span className="text-xs text-muted-foreground">{user.roleName}</span>
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col">
+                      <span>{user.fullName}</span>
+                      <span className="font-normal text-muted-foreground text-xs">{user.email}</span>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <div className="px-2 py-1">
+                    <Badge variant="outline" className="text-xs">{user.site}</Badge>
+                    <Badge variant="outline" className="text-xs ml-1">{user.roleName}</Badge>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={onLogout} className="text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </header>
 

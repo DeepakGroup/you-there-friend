@@ -17,26 +17,11 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { sites, disciplines, User } from "@/lib/mockData";
 
-const sites = [
-  { code: "NDS", name: "NDS" },
-  { code: "HSD1", name: "HSD1" },
-  { code: "HSD2", name: "HSD2" },
-  { code: "HSD3", name: "HSD3" },
-  { code: "DHJ", name: "DHJ" },
-  { code: "APL", name: "APL" },
-  { code: "TCD", name: "TCD" }
-];
-
-const disciplines = [
-  { code: "OP", name: "Operation", details: "Plant Productivity Enhancement, Capacity debottlenecking, etc." },
-  { code: "EG", name: "Engineering & Utility", details: "Downtime reduction, R&M, etc." },
-  { code: "EV", name: "Environment", details: "Reduction in waste generation, effluent handling, etc." },
-  { code: "SF", name: "Safety", details: "Process Safety Management" },
-  { code: "QA", name: "Quality", details: "Reduction in Finished Goods rejections, in-process quality checks" },
-  { code: "OT", name: "Others", details: "Logistic improvements, packaging improvements, inventory reduction" }
-];
-
+interface InitiativeFormProps {
+  user: User;
+}
 const formSchema = z.object({
   title: z.string().min(1, "Initiative title is required").min(10, "Title must be at least 10 characters"),
   initiatorName: z.string().min(1, "Initiator name is required"),
@@ -60,13 +45,15 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function InitiativeForm() {
+export default function InitiativeForm({ user }: InitiativeFormProps) {
   const [files, setFiles] = useState<File[]>([]);
   const { toast } = useToast();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      initiatorName: user.fullName,
+      site: user.site,
       isBudgeted: false,
       confidenceLevel: 80,
       targetValue: 0,

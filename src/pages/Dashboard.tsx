@@ -13,8 +13,13 @@ import {
   Plus
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { mockInitiatives, User } from "@/lib/mockData";
 
-export default function Dashboard() {
+interface DashboardProps {
+  user: User;
+}
+
+export default function Dashboard({ user }: DashboardProps) {
   const navigate = useNavigate();
 
   const stats = [
@@ -52,35 +57,15 @@ export default function Dashboard() {
     }
   ];
 
-  const recentInitiatives = [
-    {
-      id: "NDS/25/OP/AB/001",
-      title: "Energy Optimization in Reactor Unit",
-      site: "NDS",
-      status: "Under Review",
-      savings: "₹8.5L",
-      progress: 65,
-      priority: "High"
-    },
-    {
-      id: "HSD1/25/EG/CD/002",
-      title: "Downtime Reduction Initiative",
-      site: "HSD1",
-      status: "Approved",
-      savings: "₹12.3L",
-      progress: 80,
-      priority: "Medium"
-    },
-    {
-      id: "APL/25/QA/EF/003",
-      title: "Quality Control Enhancement",
-      site: "APL",
-      status: "In Progress",
-      savings: "₹6.7L",
-      progress: 45,
-      priority: "High"
-    }
-  ];
+  const recentInitiatives = mockInitiatives.slice(0, 3).map(initiative => ({
+    id: initiative.id,
+    title: initiative.title,
+    site: initiative.site,
+    status: initiative.status,
+    savings: initiative.expectedSavings,
+    progress: initiative.progress,
+    priority: initiative.priority
+  }));
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -106,7 +91,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground">Monitor your operational excellence initiatives</p>
+          <p className="text-muted-foreground">Welcome back, {user.fullName}! Monitor your operational excellence initiatives</p>
         </div>
         <Button onClick={() => navigate('/initiative/new')} className="gap-2">
           <Plus className="h-4 w-4" />
