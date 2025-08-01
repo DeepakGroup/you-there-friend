@@ -15,6 +15,7 @@ import Timeline from "./pages/Timeline";
 import KPI from "./pages/KPI";
 import Reports from "./pages/Reports";
 import Teams from "./pages/Teams";
+import Closure from "./pages/Closure";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -168,6 +169,16 @@ const AppRoutes = () => {
           <AppLayout user={user!} onLogout={logout}>
             <ErrorBoundary>
               <Teams user={user!} />
+            </ErrorBoundary>
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/closure" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <ErrorBoundary>
+              <Closure user={user!} />
             </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>

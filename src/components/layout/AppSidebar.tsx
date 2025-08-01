@@ -9,7 +9,8 @@ import {
   PlusCircle,
   ClipboardCheck,
   Users,
-  TrendingUp
+  TrendingUp,
+  XCircle
 } from "lucide-react";
 import {
   Sidebar,
@@ -70,6 +71,12 @@ const navigationItems = [
     title: "Team Management",
     url: "/teams",
     icon: Users,
+    group: "Management"
+  },
+  {
+    title: "Initiative Closure",
+    url: "/closure",
+    icon: XCircle,
     group: "Management"
   }
 ];
