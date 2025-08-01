@@ -16,7 +16,6 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/initiatives")
-@CrossOrigin(origins = "*")
 public class InitiativeController {
 
     @Autowired

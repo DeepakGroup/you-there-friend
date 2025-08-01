@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/workflow")
-@CrossOrigin(origins = "*")
 public class WorkflowController {
 
     @Autowired
