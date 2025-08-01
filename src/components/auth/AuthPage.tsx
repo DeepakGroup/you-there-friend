@@ -60,19 +60,28 @@ export default function AuthPage({ onLogin }: AuthProps) {
     
     try {
       if (isLogin) {
+        console.log('Attempting login with:', formData.email);
         // Real API login
         const result = await login(formData.email, formData.password);
+        console.log('Login result:', result);
         
         if (result.success) {
-          console.log('Login successful in AuthPage');
+          console.log('Login successful in AuthPage - user should be updated');
           toast({
             title: "Login Successful",
             description: "Welcome back to OpEx Hub!",
           });
           // Clear form data after successful login
           setFormData(prev => ({ ...prev, password: '' }));
+          
+          // Call onLogin callback to notify parent
+          if (result.user) {
+            onLogin(result.user);
+          }
+          
           // Navigation will happen automatically via App.tsx when user state changes
         } else {
+          console.log('Login failed with error:', result.error);
           toast({
             title: "Login Failed",
             description: result.error || "Invalid credentials",
@@ -178,7 +187,7 @@ export default function AuthPage({ onLogin }: AuthProps) {
                       <Input
                         id="email"
                         type="email"
-                        placeholder="john.doe@company.com"
+                        placeholder="john.lead@company.com"
                         className="pl-10"
                         value={formData.email}
                         onChange={(e) => handleInputChange("email", e.target.value)}
@@ -232,7 +241,7 @@ export default function AuthPage({ onLogin }: AuthProps) {
                         <Input
                           id="email"
                           type="email"
-                          placeholder="john.doe@company.com"
+                          placeholder="john.lead@company.com"
                           className="pl-10"
                           value={formData.email}
                           onChange={(e) => handleInputChange("email", e.target.value)}
