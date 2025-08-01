@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = 'http://localhost:3000/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -171,6 +171,29 @@ export const commentAPI = {
   
   delete: async (id: number) => {
     const response = await api.delete(`/comments/${id}`);
+    return response.data;
+  }
+};
+
+// User API
+export const userAPI = {
+  getAll: async () => {
+    const response = await api.get('/users');
+    return response.data;
+  },
+  
+  getBySite: async (site: string) => {
+    const response = await api.get(`/users/site/${site}`);
+    return response.data;
+  },
+  
+  getByRole: async (role: string) => {
+    const response = await api.get(`/users/role/${role}`);
+    return response.data;
+  },
+  
+  getBySiteAndRole: async (site: string, role: string) => {
+    const response = await api.get(`/users/site/${site}/role/${role}`);
     return response.data;
   }
 };
