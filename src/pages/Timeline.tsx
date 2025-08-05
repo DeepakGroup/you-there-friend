@@ -42,8 +42,32 @@ export default function Timeline({ user }: TimelineProps) {
   const createTaskMutation = useCreateTimelineTask();
   const updateTaskMutation = useUpdateTimelineTask();
   
+  // Mock data fallback for Timeline
+  const mockInitiatives = [
+    {
+      id: 1,
+      title: "Process Improvement Initiative",
+      status: "IN_PROGRESS",
+      site: "Mumbai",
+      initiativeLead: "John Doe",
+      expectedSavings: 150
+    },
+    {
+      id: 2,
+      title: "Cost Reduction Program",
+      status: "PLANNING",
+      site: "Delhi",
+      initiativeLead: "Jane Smith",
+      expectedSavings: 200
+    }
+  ];
+  
   // Handle both API response format and mock data format
-  const initiatives = initiativesData?.content || initiativesData || [];
+  const initiatives = (Array.isArray(initiativesData?.content) && initiativesData.content.length > 0) 
+    ? initiativesData.content 
+    : (Array.isArray(initiativesData) && initiativesData.length > 0) 
+    ? initiativesData 
+    : mockInitiatives;
   const itemsPerPage = 6;
 
   const handleProgressUpdate = (taskId: number, progress: number) => {

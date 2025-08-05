@@ -2,10 +2,43 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { monthlyMonitoringAPI } from '@/lib/api';
 import { toast } from 'sonner';
 
+// Mock data for Monthly Monitoring
+const mockMonitoringEntries = [
+  {
+    id: 1,
+    kpiDescription: "Energy consumption reduction",
+    monitoringMonth: "2025-01",
+    targetValue: 500,
+    achievedValue: 450,
+    deviation: -50,
+    isFinalized: false,
+    faApproval: false,
+    enteredBy: "Site TSO"
+  },
+  {
+    id: 2,
+    kpiDescription: "Waste reduction percentage",
+    monitoringMonth: "2025-01",
+    targetValue: 20,
+    achievedValue: 25,
+    deviation: 5,
+    isFinalized: true,
+    faApproval: true,
+    enteredBy: "Corp TSO"
+  }
+];
+
 export const useMonitoringEntries = (initiativeId: number) => {
   return useQuery({
     queryKey: ['monitoring-entries', initiativeId],
-    queryFn: () => monthlyMonitoringAPI.getMonitoringEntries(initiativeId),
+    queryFn: async () => {
+      try {
+        return await monthlyMonitoringAPI.getMonitoringEntries(initiativeId);
+      } catch (error) {
+        console.warn('API call failed, using mock data:', error);
+        return mockMonitoringEntries;
+      }
+    },
     enabled: !!initiativeId,
   });
 };

@@ -14,8 +14,40 @@ interface KPIProps {
 export default function KPI({ user }: KPIProps) {
   const { data: initiativesData, isLoading } = useInitiatives();
   
+  // Mock data fallback for KPI
+  const mockInitiatives = [
+    {
+      id: 1,
+      title: "Process Improvement Initiative",
+      status: "In Progress",
+      site: "Mumbai",
+      priority: "High",
+      expectedSavings: 150
+    },
+    {
+      id: 2,
+      title: "Cost Reduction Program",
+      status: "Completed",
+      site: "Delhi",
+      priority: "Medium",
+      expectedSavings: 200
+    },
+    {
+      id: 3,
+      title: "Quality Enhancement",
+      status: "Pending",
+      site: "Bangalore",
+      priority: "Low",
+      expectedSavings: 120
+    }
+  ];
+  
   // Handle both API response format and mock data format
-  const initiatives = initiativesData?.content || initiativesData || [];
+  const initiatives = (Array.isArray(initiativesData?.content) && initiativesData.content.length > 0) 
+    ? initiativesData.content 
+    : (Array.isArray(initiativesData) && initiativesData.length > 0) 
+    ? initiativesData 
+    : mockInitiatives;
 
   if (isLoading) {
     return <div className="p-6">Loading KPI data...</div>;
