@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/timeline-tracker")
-@CrossOrigin(origins = "*")
+
 public class TimelineTrackerController {
 
     @Autowired
