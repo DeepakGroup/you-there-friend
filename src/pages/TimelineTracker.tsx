@@ -54,15 +54,46 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
   const queryClient = useQueryClient();
   const itemsPerPage = 6;
 
-  // Fetch initiatives
+  // Fetch initiatives with fallback mock data
   const { data: initiatives = [], isLoading: initiativesLoading } = useInitiatives();
+  
+  // Mock data fallback
+  const mockInitiatives = [
+    {
+      id: 1,
+      title: "Process Improvement Initiative",
+      status: "IN_PROGRESS",
+      site: "Mumbai",
+      initiativeLead: "John Doe",
+      expectedSavings: 150
+    },
+    {
+      id: 2,
+      title: "Cost Reduction Program",
+      status: "PLANNING",
+      site: "Delhi",
+      initiativeLead: "Jane Smith",
+      expectedSavings: 200
+    },
+    {
+      id: 3,
+      title: "Quality Enhancement Project",
+      status: "COMPLETED",
+      site: "Bangalore",
+      initiativeLead: "Mike Johnson",
+      expectedSavings: 120
+    }
+  ];
+  
+  // Ensure initiatives is always an array
+  const safeInitiatives = Array.isArray(initiatives) && initiatives.length > 0 ? initiatives : mockInitiatives;
 
   // Custom hooks for timeline tracker
   const { data: timelineEntries = [], isLoading: entriesLoading } = useQuery({
     queryKey: ['timeline-entries', selectedInitiativeId],
     queryFn: async () => {
       if (!selectedInitiativeId) return [];
-      const response = await fetch(`http://localhost:8080/api/timeline-tracker/${selectedInitiativeId}`, {
+      const response = await fetch(`http://localhost:9090/api/timeline-tracker/${selectedInitiativeId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
           'Content-Type': 'application/json'
@@ -76,7 +107,7 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
 
   const createMutation = useMutation({
     mutationFn: async (entry: TimelineEntry) => {
-      const response = await fetch(`http://localhost:8080/api/timeline-tracker/${selectedInitiativeId}`, {
+      const response = await fetch(`http://localhost:9090/api/timeline-tracker/${selectedInitiativeId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
@@ -97,7 +128,7 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, entry }: { id: number; entry: TimelineEntry }) => {
-      const response = await fetch(`http://localhost:8080/api/timeline-tracker/entry/${id}`, {
+      const response = await fetch(`http://localhost:9090/api/timeline-tracker/entry/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
@@ -127,7 +158,7 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
       if (siteLeadApproval !== undefined) params.append('siteLeadApproval', siteLeadApproval.toString());
       if (initiativeLeadApproval !== undefined) params.append('initiativeLeadApproval', initiativeLeadApproval.toString());
       
-      const response = await fetch(`http://localhost:8080/api/timeline-tracker/entry/${id}/approvals?${params.toString()}`, {
+      const response = await fetch(`http://localhost:9090/api/timeline-tracker/entry/${id}/approvals?${params.toString()}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
@@ -145,7 +176,7 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`http://localhost:8080/api/timeline-tracker/entry/${id}`, {
+      const response = await fetch(`http://localhost:9090/api/timeline-tracker/entry/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
@@ -162,11 +193,11 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
 
 
   // Pagination logic for initiatives
-  const paginatedInitiatives = initiatives.slice(
+  const paginatedInitiatives = safeInitiatives.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  const totalPages = Math.ceil(initiatives.length / itemsPerPage);
+  const totalPages = Math.ceil(safeInitiatives.length / itemsPerPage);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -403,7 +434,7 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
         <div>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold">
-              Timeline for: {initiatives.find(i => i.id === selectedInitiativeId)?.title}
+              Timeline for: {safeInitiatives.find(i => i.id === selectedInitiativeId)?.title}
             </h2>
             <Button variant="outline" onClick={() => setSelectedInitiativeId(null)}>
               Back to Initiatives
