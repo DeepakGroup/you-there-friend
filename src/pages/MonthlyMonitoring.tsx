@@ -10,25 +10,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Plus, Edit, Trash2, FileText, TrendingUp, Target } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useToast } from '@/hooks/use-toast';
 import { useInitiatives } from '@/hooks/useInitiatives';
-import axios from 'axios';
-
-const API_BASE_URL = 'http://localhost:9090/api';
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('opex_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
 
 interface User {
   id: string;
@@ -55,27 +41,6 @@ interface MonthlyMonitoringProps {
   user: User;
 }
 
-const monitoringAPI = {
-  getByInitiative: (initiativeId: number) => 
-    api.get(`/monthly-monitoring/${initiativeId}`).then(res => res.data.data),
-  getByInitiativeAndMonth: (initiativeId: number, month: string) => 
-    api.get(`/monthly-monitoring/${initiativeId}/month/${month}`).then(res => res.data.data),
-  create: (initiativeId: number, entry: MonthlyMonitoringEntry) => 
-    api.post(`/monthly-monitoring/${initiativeId}`, entry).then(res => res.data.data),
-  update: (id: number, entry: MonthlyMonitoringEntry) => 
-    api.put(`/monthly-monitoring/entry/${id}`, entry).then(res => res.data.data),
-  updateFinalization: (id: number, isFinalized: boolean) => 
-    api.put(`/monthly-monitoring/entry/${id}/finalize`, null, {
-      params: { isFinalized }
-    }).then(res => res.data.data),
-  updateFAApproval: (id: number, faApproval: boolean, faComments?: string) => 
-    api.put(`/monthly-monitoring/entry/${id}/fa-approval`, null, {
-      params: { faApproval, faComments }
-    }).then(res => res.data.data),
-  delete: (id: number) => 
-    api.delete(`/monthly-monitoring/entry/${id}`).then(res => res.data),
-};
-
 export default function MonthlyMonitoring({ user }: MonthlyMonitoringProps) {
   const [selectedInitiativeId, setSelectedInitiativeId] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string>(new Date().toISOString().slice(0, 7));
@@ -95,20 +60,51 @@ export default function MonthlyMonitoring({ user }: MonthlyMonitoringProps) {
   // Fetch monitoring entries for selected initiative
   const { data: monitoringEntries = [], isLoading: entriesLoading } = useQuery({
     queryKey: ['monitoring-entries', selectedInitiativeId],
-    queryFn: () => monitoringAPI.getByInitiative(selectedInitiativeId!),
+    queryFn: async () => {
+      if (!selectedInitiativeId) return [];
+      const response = await fetch(`http://localhost:8080/api/monthly-monitoring/${selectedInitiativeId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+      return result.data || [];
+    },
     enabled: !!selectedInitiativeId,
   });
 
   // Fetch entries for specific month
   const { data: monthlyEntries = [], isLoading: monthlyLoading } = useQuery({
     queryKey: ['monitoring-entries', selectedInitiativeId, selectedMonth],
-    queryFn: () => monitoringAPI.getByInitiativeAndMonth(selectedInitiativeId!, selectedMonth),
+    queryFn: async () => {
+      if (!selectedInitiativeId || !selectedMonth) return [];
+      const response = await fetch(`http://localhost:8080/api/monthly-monitoring/${selectedInitiativeId}/month/${selectedMonth}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+      return result.data || [];
+    },
     enabled: !!selectedInitiativeId && !!selectedMonth,
   });
 
   // Mutations
   const createMutation = useMutation({
-    mutationFn: (entry: MonthlyMonitoringEntry) => monitoringAPI.create(selectedInitiativeId!, entry),
+    mutationFn: async (entry: MonthlyMonitoringEntry) => {
+      const response = await fetch(`http://localhost:8080/api/monthly-monitoring/${selectedInitiativeId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(entry)
+      });
+      const result = await response.json();
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['monitoring-entries'] });
       toast({ title: "Success", description: "Monitoring entry created successfully" });
@@ -118,8 +114,18 @@ export default function MonthlyMonitoring({ user }: MonthlyMonitoringProps) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, entry }: { id: number; entry: MonthlyMonitoringEntry }) => 
-      monitoringAPI.update(id, entry),
+    mutationFn: async ({ id, entry }: { id: number; entry: MonthlyMonitoringEntry }) => {
+      const response = await fetch(`http://localhost:8080/api/monthly-monitoring/entry/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(entry)
+      });
+      const result = await response.json();
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['monitoring-entries'] });
       toast({ title: "Success", description: "Monitoring entry updated successfully" });
@@ -130,8 +136,17 @@ export default function MonthlyMonitoring({ user }: MonthlyMonitoringProps) {
   });
 
   const finalizeMutation = useMutation({
-    mutationFn: ({ id, isFinalized }: { id: number; isFinalized: boolean }) => 
-      monitoringAPI.updateFinalization(id, isFinalized),
+    mutationFn: async ({ id, isFinalized }: { id: number; isFinalized: boolean }) => {
+      const response = await fetch(`http://localhost:8080/api/monthly-monitoring/entry/${id}/finalize?isFinalized=${isFinalized}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['monitoring-entries'] });
       toast({ title: "Success", description: "Finalization status updated" });
@@ -139,8 +154,21 @@ export default function MonthlyMonitoring({ user }: MonthlyMonitoringProps) {
   });
 
   const faApprovalMutation = useMutation({
-    mutationFn: ({ id, faApproval, faComments }: { id: number; faApproval: boolean; faComments?: string }) => 
-      monitoringAPI.updateFAApproval(id, faApproval, faComments),
+    mutationFn: async ({ id, faApproval, faComments }: { id: number; faApproval: boolean; faComments?: string }) => {
+      const params = new URLSearchParams();
+      params.append('faApproval', faApproval.toString());
+      if (faComments) params.append('faComments', faComments);
+      
+      const response = await fetch(`http://localhost:8080/api/monthly-monitoring/entry/${id}/fa-approval?${params.toString()}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['monitoring-entries'] });
       toast({ title: "Success", description: "F&A approval status updated" });
@@ -148,7 +176,16 @@ export default function MonthlyMonitoring({ user }: MonthlyMonitoringProps) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: monitoringAPI.delete,
+    mutationFn: async (id: number) => {
+      const response = await fetch(`http://localhost:8080/api/monthly-monitoring/entry/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['monitoring-entries'] });
       toast({ title: "Success", description: "Monitoring entry deleted successfully" });

@@ -10,26 +10,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
 import { CalendarIcon, Plus, Edit, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useInitiatives } from '@/hooks/useInitiatives';
-import axios from 'axios';
-
-const API_BASE_URL = 'http://localhost:9090/api';
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('opex_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
 
 interface User {
   id: string;
@@ -57,21 +43,6 @@ interface TimelineTrackerProps {
   user: User;
 }
 
-const timelineAPI = {
-  getByInitiative: (initiativeId: number) => 
-    api.get(`/timeline-tracker/${initiativeId}`).then(res => res.data.data),
-  create: (initiativeId: number, entry: TimelineEntry) => 
-    api.post(`/timeline-tracker/${initiativeId}`, entry).then(res => res.data.data),
-  update: (id: number, entry: TimelineEntry) => 
-    api.put(`/timeline-tracker/entry/${id}`, entry).then(res => res.data.data),
-  updateApprovals: (id: number, siteLeadApproval?: boolean, initiativeLeadApproval?: boolean) => 
-    api.put(`/timeline-tracker/entry/${id}/approvals`, null, {
-      params: { siteLeadApproval, initiativeLeadApproval }
-    }).then(res => res.data.data),
-  delete: (id: number) => 
-    api.delete(`/timeline-tracker/entry/${id}`).then(res => res.data),
-};
-
 export default function TimelineTracker({ user }: TimelineTrackerProps) {
   const [selectedInitiativeId, setSelectedInitiativeId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -86,16 +57,36 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
   // Fetch initiatives
   const { data: initiatives = [], isLoading: initiativesLoading } = useInitiatives();
 
-  // Fetch timeline entries for selected initiative
+  // Custom hooks for timeline tracker
   const { data: timelineEntries = [], isLoading: entriesLoading } = useQuery({
     queryKey: ['timeline-entries', selectedInitiativeId],
-    queryFn: () => timelineAPI.getByInitiative(selectedInitiativeId!),
+    queryFn: async () => {
+      if (!selectedInitiativeId) return [];
+      const response = await fetch(`http://localhost:8080/api/timeline-tracker/${selectedInitiativeId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+      return result.data || [];
+    },
     enabled: !!selectedInitiativeId,
   });
 
-  // Mutations
   const createMutation = useMutation({
-    mutationFn: (entry: TimelineEntry) => timelineAPI.create(selectedInitiativeId!, entry),
+    mutationFn: async (entry: TimelineEntry) => {
+      const response = await fetch(`http://localhost:8080/api/timeline-tracker/${selectedInitiativeId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(entry)
+      });
+      const result = await response.json();
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['timeline-entries'] });
       toast({ title: "Success", description: "Timeline entry created successfully" });
@@ -105,8 +96,18 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, entry }: { id: number; entry: TimelineEntry }) => 
-      timelineAPI.update(id, entry),
+    mutationFn: async ({ id, entry }: { id: number; entry: TimelineEntry }) => {
+      const response = await fetch(`http://localhost:8080/api/timeline-tracker/entry/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(entry)
+      });
+      const result = await response.json();
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['timeline-entries'] });
       toast({ title: "Success", description: "Timeline entry updated successfully" });
@@ -117,11 +118,25 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
   });
 
   const approvalMutation = useMutation({
-    mutationFn: ({ id, siteLeadApproval, initiativeLeadApproval }: {
+    mutationFn: async ({ id, siteLeadApproval, initiativeLeadApproval }: {
       id: number;
       siteLeadApproval?: boolean;
       initiativeLeadApproval?: boolean;
-    }) => timelineAPI.updateApprovals(id, siteLeadApproval, initiativeLeadApproval),
+    }) => {
+      const params = new URLSearchParams();
+      if (siteLeadApproval !== undefined) params.append('siteLeadApproval', siteLeadApproval.toString());
+      if (initiativeLeadApproval !== undefined) params.append('initiativeLeadApproval', initiativeLeadApproval.toString());
+      
+      const response = await fetch(`http://localhost:8080/api/timeline-tracker/entry/${id}/approvals?${params.toString()}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['timeline-entries'] });
       toast({ title: "Success", description: "Approval status updated" });
@@ -129,12 +144,22 @@ export default function TimelineTracker({ user }: TimelineTrackerProps) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: timelineAPI.delete,
+    mutationFn: async (id: number) => {
+      const response = await fetch(`http://localhost:8080/api/timeline-tracker/entry/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('opex_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['timeline-entries'] });
       toast({ title: "Success", description: "Timeline entry deleted successfully" });
     },
   });
+
 
   // Pagination logic for initiatives
   const paginatedInitiatives = initiatives.slice(

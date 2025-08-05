@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:9090/api';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -199,6 +199,100 @@ export const userAPI = {
   
   getBySiteAndRole: async (site: string, role: string) => {
     const response = await api.get(`/users/site/${site}/role/${role}`);
+    return response.data;
+  }
+};
+
+// Timeline Tracker API
+export const timelineTrackerAPI = {
+  getTimelineEntries: async (initiativeId: number) => {
+    const response = await api.get(`/timeline-tracker/${initiativeId}`);
+    return response.data;
+  },
+  
+  getTimelineEntryById: async (id: number) => {
+    const response = await api.get(`/timeline-tracker/entry/${id}`);
+    return response.data;
+  },
+  
+  createTimelineEntry: async (initiativeId: number, entryData: any) => {
+    const response = await api.post(`/timeline-tracker/${initiativeId}`, entryData);
+    return response.data;
+  },
+  
+  updateTimelineEntry: async (id: number, entryData: any) => {
+    const response = await api.put(`/timeline-tracker/entry/${id}`, entryData);
+    return response.data;
+  },
+  
+  updateApprovals: async (id: number, siteLeadApproval?: boolean, initiativeLeadApproval?: boolean) => {
+    const params = new URLSearchParams();
+    if (siteLeadApproval !== undefined) params.append('siteLeadApproval', siteLeadApproval.toString());
+    if (initiativeLeadApproval !== undefined) params.append('initiativeLeadApproval', initiativeLeadApproval.toString());
+    
+    const response = await api.put(`/timeline-tracker/entry/${id}/approvals?${params.toString()}`);
+    return response.data;
+  },
+  
+  deleteTimelineEntry: async (id: number) => {
+    const response = await api.delete(`/timeline-tracker/entry/${id}`);
+    return response.data;
+  },
+  
+  getPendingApprovals: async (initiativeId: number) => {
+    const response = await api.get(`/timeline-tracker/${initiativeId}/pending-approvals`);
+    return response.data;
+  }
+};
+
+// Monthly Monitoring API
+export const monthlyMonitoringAPI = {
+  getMonitoringEntries: async (initiativeId: number) => {
+    const response = await api.get(`/monthly-monitoring/${initiativeId}`);
+    return response.data;
+  },
+  
+  getMonitoringEntriesByMonth: async (initiativeId: number, monthYear: string) => {
+    const response = await api.get(`/monthly-monitoring/${initiativeId}/month/${monthYear}`);
+    return response.data;
+  },
+  
+  getMonitoringEntryById: async (id: number) => {
+    const response = await api.get(`/monthly-monitoring/entry/${id}`);
+    return response.data;
+  },
+  
+  createMonitoringEntry: async (initiativeId: number, entryData: any) => {
+    const response = await api.post(`/monthly-monitoring/${initiativeId}`, entryData);
+    return response.data;
+  },
+  
+  updateMonitoringEntry: async (id: number, entryData: any) => {
+    const response = await api.put(`/monthly-monitoring/entry/${id}`, entryData);
+    return response.data;
+  },
+  
+  updateFinalizationStatus: async (id: number, isFinalized: boolean) => {
+    const response = await api.put(`/monthly-monitoring/entry/${id}/finalize?isFinalized=${isFinalized}`);
+    return response.data;
+  },
+  
+  updateFAApproval: async (id: number, faApproval: boolean, faComments?: string) => {
+    const params = new URLSearchParams();
+    params.append('faApproval', faApproval.toString());
+    if (faComments) params.append('faComments', faComments);
+    
+    const response = await api.put(`/monthly-monitoring/entry/${id}/fa-approval?${params.toString()}`);
+    return response.data;
+  },
+  
+  deleteMonitoringEntry: async (id: number) => {
+    const response = await api.delete(`/monthly-monitoring/entry/${id}`);
+    return response.data;
+  },
+  
+  getPendingFAApprovals: async (initiativeId: number) => {
+    const response = await api.get(`/monthly-monitoring/${initiativeId}/pending-fa-approvals`);
     return response.data;
   }
 };
