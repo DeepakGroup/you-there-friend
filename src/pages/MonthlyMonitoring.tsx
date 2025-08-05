@@ -16,6 +16,20 @@ import { useToast } from '@/hooks/use-toast';
 import { useInitiatives } from '@/hooks/useInitiatives';
 import axios from 'axios';
 
+const API_BASE_URL = 'http://localhost:9090/api';
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('opex_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 interface User {
   id: string;
   fullName: string;
@@ -43,23 +57,23 @@ interface MonthlyMonitoringProps {
 
 const monitoringAPI = {
   getByInitiative: (initiativeId: number) => 
-    axios.get(`/api/monthly-monitoring/${initiativeId}`).then(res => res.data.data),
+    api.get(`/monthly-monitoring/${initiativeId}`).then(res => res.data.data),
   getByInitiativeAndMonth: (initiativeId: number, month: string) => 
-    axios.get(`/api/monthly-monitoring/${initiativeId}/month/${month}`).then(res => res.data.data),
+    api.get(`/monthly-monitoring/${initiativeId}/month/${month}`).then(res => res.data.data),
   create: (initiativeId: number, entry: MonthlyMonitoringEntry) => 
-    axios.post(`/api/monthly-monitoring/${initiativeId}`, entry).then(res => res.data.data),
+    api.post(`/monthly-monitoring/${initiativeId}`, entry).then(res => res.data.data),
   update: (id: number, entry: MonthlyMonitoringEntry) => 
-    axios.put(`/api/monthly-monitoring/entry/${id}`, entry).then(res => res.data.data),
+    api.put(`/monthly-monitoring/entry/${id}`, entry).then(res => res.data.data),
   updateFinalization: (id: number, isFinalized: boolean) => 
-    axios.put(`/api/monthly-monitoring/entry/${id}/finalize`, null, {
+    api.put(`/monthly-monitoring/entry/${id}/finalize`, null, {
       params: { isFinalized }
     }).then(res => res.data.data),
   updateFAApproval: (id: number, faApproval: boolean, faComments?: string) => 
-    axios.put(`/api/monthly-monitoring/entry/${id}/fa-approval`, null, {
+    api.put(`/monthly-monitoring/entry/${id}/fa-approval`, null, {
       params: { faApproval, faComments }
     }).then(res => res.data.data),
   delete: (id: number) => 
-    axios.delete(`/api/monthly-monitoring/entry/${id}`).then(res => res.data),
+    api.delete(`/monthly-monitoring/entry/${id}`).then(res => res.data),
 };
 
 export default function MonthlyMonitoring({ user }: MonthlyMonitoringProps) {

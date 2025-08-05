@@ -17,6 +17,20 @@ import { useToast } from '@/hooks/use-toast';
 import { useInitiatives } from '@/hooks/useInitiatives';
 import axios from 'axios';
 
+const API_BASE_URL = 'http://localhost:9090/api';
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('opex_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 interface User {
   id: string;
   fullName: string;
@@ -45,17 +59,17 @@ interface TimelineTrackerProps {
 
 const timelineAPI = {
   getByInitiative: (initiativeId: number) => 
-    axios.get(`/api/timeline-tracker/${initiativeId}`).then(res => res.data.data),
+    api.get(`/timeline-tracker/${initiativeId}`).then(res => res.data.data),
   create: (initiativeId: number, entry: TimelineEntry) => 
-    axios.post(`/api/timeline-tracker/${initiativeId}`, entry).then(res => res.data.data),
+    api.post(`/timeline-tracker/${initiativeId}`, entry).then(res => res.data.data),
   update: (id: number, entry: TimelineEntry) => 
-    axios.put(`/api/timeline-tracker/entry/${id}`, entry).then(res => res.data.data),
+    api.put(`/timeline-tracker/entry/${id}`, entry).then(res => res.data.data),
   updateApprovals: (id: number, siteLeadApproval?: boolean, initiativeLeadApproval?: boolean) => 
-    axios.put(`/api/timeline-tracker/entry/${id}/approvals`, null, {
+    api.put(`/timeline-tracker/entry/${id}/approvals`, null, {
       params: { siteLeadApproval, initiativeLeadApproval }
     }).then(res => res.data.data),
   delete: (id: number) => 
-    axios.delete(`/api/timeline-tracker/entry/${id}`).then(res => res.data),
+    api.delete(`/timeline-tracker/entry/${id}`).then(res => res.data),
 };
 
 export default function TimelineTracker({ user }: TimelineTrackerProps) {
