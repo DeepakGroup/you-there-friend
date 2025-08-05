@@ -10,7 +10,9 @@ import {
   ClipboardCheck,
   Users,
   TrendingUp,
-  XCircle
+  XCircle,
+  Clock,
+  BarChart2
 } from "lucide-react";
 import {
   Sidebar,
@@ -53,6 +55,18 @@ const navigationItems = [
     title: "Timeline Tracking",
     url: "/timeline",
     icon: Calendar,
+    group: "Tracking"
+  },
+  {
+    title: "Timeline Tracker",
+    url: "/timeline-tracker",
+    icon: Clock,
+    group: "Tracking"
+  },
+  {
+    title: "Monthly Monitoring",
+    url: "/monthly-monitoring",
+    icon: BarChart2,
     group: "Tracking"
   },
   {

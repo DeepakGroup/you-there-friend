@@ -16,6 +16,8 @@ import KPI from "./pages/KPI";
 import Reports from "./pages/Reports";
 import Teams from "./pages/Teams";
 import Closure from "./pages/Closure";
+import TimelineTracker from "./pages/TimelineTracker";
+import MonthlyMonitoring from "./pages/MonthlyMonitoring";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -169,6 +171,26 @@ const AppRoutes = () => {
           <AppLayout user={user!} onLogout={logout}>
             <ErrorBoundary>
               <Teams user={user!} />
+            </ErrorBoundary>
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/timeline-tracker" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <ErrorBoundary>
+              <TimelineTracker user={user!} />
+            </ErrorBoundary>
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/monthly-monitoring" element={
+        <ProtectedRoute>
+          <AppLayout user={user!} onLogout={logout}>
+            <ErrorBoundary>
+              <MonthlyMonitoring user={user!} />
             </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>
