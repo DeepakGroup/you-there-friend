@@ -235,72 +235,72 @@ export default function Initiatives({ user }: InitiativesProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Initiative ID</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Site</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Expected Savings</TableHead>
-                  <TableHead>Progress</TableHead>
-                  <TableHead>Last Updated</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="w-24">ID</TableHead>
+                  <TableHead className="min-w-48">Title & Discipline</TableHead>
+                  <TableHead className="w-20">Site</TableHead>
+                  <TableHead className="w-32">Status</TableHead>
+                  <TableHead className="w-24">Priority</TableHead>
+                  <TableHead className="w-32">Expected Savings</TableHead>
+                  <TableHead className="w-24">Progress</TableHead>
+                  <TableHead className="w-28">Last Updated</TableHead>
+                  <TableHead className="w-20">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedData.data.map((initiative: Initiative) => (
                   <TableRow key={initiative.id} className="hover:bg-muted/50">
-                    <TableCell>
-                      <Badge variant="outline" className="font-mono text-xs">
+                    <TableCell className="p-3">
+                      <Badge variant="outline" className="font-mono text-xs px-2 py-1">
                         {initiative.id}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{initiative.title}</p>
+                    <TableCell className="p-3">
+                      <div className="space-y-1">
+                        <p className="font-medium text-sm leading-tight">{initiative.title}</p>
                         <p className="text-xs text-muted-foreground">{initiative.discipline}</p>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{initiative.site}</Badge>
+                    <TableCell className="p-3">
+                      <Badge variant="outline" className="text-xs px-2 py-1">{initiative.site}</Badge>
                     </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(initiative.status)}>
+                    <TableCell className="p-3">
+                      <Badge className={`${getStatusColor(initiative.status)} text-xs px-2 py-1`}>
                         {initiative.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <Badge className={getPriorityColor(initiative.priority)}>
+                    <TableCell className="p-3">
+                      <Badge className={`${getPriorityColor(initiative.priority)} text-xs px-2 py-1`}>
                         {initiative.priority}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <span className="font-semibold text-success">
+                    <TableCell className="p-3">
+                      <span className="font-semibold text-success text-sm">
                         {formatCurrency(initiative.expectedSavings)}
                       </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="p-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-16 bg-muted rounded-full h-2">
+                        <div className="w-12 bg-muted rounded-full h-1.5">
                           <div 
-                            className="bg-primary h-2 rounded-full transition-all"
+                            className="bg-primary h-1.5 rounded-full transition-all"
                             style={{ width: `${initiative.progress}%` }}
                           ></div>
                         </div>
-                        <span className="text-xs font-medium">{initiative.progress}%</span>
+                        <span className="text-xs font-medium w-8">{initiative.progress}%</span>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="p-3">
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        {initiative.lastUpdated}
+                        <span className="truncate">{initiative.lastUpdated}</span>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="p-3">
                       <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost">
+                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
                           <Eye className="h-3 w-3" />
                         </Button>
-                        <Button size="sm" variant="ghost">
+                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
                           <Edit className="h-3 w-3" />
                         </Button>
                       </div>
