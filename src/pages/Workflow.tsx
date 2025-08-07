@@ -132,37 +132,54 @@ export default function Workflow({ user }: WorkflowProps) {
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold">Select Initiative</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Vertical Layout for Initiatives */}
+              <div className="space-y-4">
                 {paginatedInitiatives.map((initiative: any) => (
                   <Card
                     key={initiative.id}
                     className="cursor-pointer hover:shadow-lg transition-all duration-200 border-2 hover:border-primary/20"
                     onClick={() => setSelectedInitiative(initiative.id)}
                   >
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <CardTitle className="text-lg line-clamp-2">{initiative.title}</CardTitle>
-                        <Badge className={getStatusColor(initiative.status)}>
-                          {initiative.status}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <p className="text-sm text-muted-foreground line-clamp-3">{initiative.description}</p>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Site: {initiative.site}</span>
-                          <span className="text-muted-foreground">Stage: {initiative.currentStage || 1}</span>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-sm">
-                            <span>Progress</span>
-                            <span>{initiative.progressPercentage}%</span>
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-semibold">{initiative.title}</h3>
+                            <Badge className={getStatusColor(initiative.status)}>
+                              {initiative.status}
+                            </Badge>
                           </div>
-                          <Progress value={initiative.progressPercentage} className="h-2" />
+                          
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <span className="text-muted-foreground">Site:</span>
+                              <p className="font-medium">{initiative.site}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Initiative Lead:</span>
+                              <p className="font-medium">{initiative.initiativeLead}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Current Stage:</span>
+                              <p className="font-medium">{initiative.currentStage || 1}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Expected Savings:</span>
+                              <p className="font-medium">${initiative.expectedSavings || 0}K</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span>Progress</span>
+                              <span>{initiative.progressPercentage || 0}%</span>
+                            </div>
+                            <Progress value={initiative.progressPercentage || 0} className="h-2" />
+                          </div>
                         </div>
-                        <div className="pt-2">
-                          <Button variant="outline" size="sm" className="w-full">
+                        
+                        <div className="ml-6">
+                          <Button variant="outline" size="sm">
                             View Workflow →
                           </Button>
                         </div>
