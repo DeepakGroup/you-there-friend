@@ -243,7 +243,7 @@ export default function Timeline({ user }: TimelineProps) {
                   Add Task
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Create New Timeline Task</DialogTitle>
                 </DialogHeader>
@@ -455,7 +455,7 @@ export default function Timeline({ user }: TimelineProps) {
 
       {/* Edit Task Dialog */}
       <Dialog open={editTaskOpen} onOpenChange={setEditTaskOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Timeline Task</DialogTitle>
           </DialogHeader>
