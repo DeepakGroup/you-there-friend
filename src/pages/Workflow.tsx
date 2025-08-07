@@ -161,7 +161,7 @@ export default function Workflow({ user }: WorkflowProps) {
                             </div>
                             <div>
                               <span className="text-muted-foreground">Current Stage:</span>
-                              <p className="font-medium">{initiative.currentStage || 1}</p>
+                              <p className="font-medium">{initiative.currentStageName || 'Register Initiative'}</p>
                             </div>
                             <div>
                               <span className="text-muted-foreground">Expected Savings:</span>
@@ -247,7 +247,7 @@ export default function Workflow({ user }: WorkflowProps) {
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
-                            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary font-semibold">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary font-bold text-lg">
                               {stage.stageNumber}
                             </div>
                             <div>
@@ -287,16 +287,23 @@ export default function Workflow({ user }: WorkflowProps) {
 
                         {stage.status === 'pending' && stage.requiredRole === user.role && (
                           <div className="space-y-4 border-t pt-4">
-                            <Textarea
-                              placeholder="Add comments (optional)"
-                              value={comments[stage.id] || ''}
-                              onChange={(e) => setComments(prev => ({ ...prev, [stage.id]: e.target.value }))}
-                              className="min-h-[80px]"
-                            />
+                            <div>
+                              <label className="text-sm font-medium text-red-600">
+                                Comments (Required)*
+                              </label>
+                              <Textarea
+                                placeholder="Please provide your comments for this approval/rejection..."
+                                value={comments[stage.id] || ''}
+                                onChange={(e) => setComments(prev => ({ ...prev, [stage.id]: e.target.value }))}
+                                className="min-h-[100px] mt-2"
+                                required
+                              />
+                            </div>
                             <div className="flex gap-3">
                               <Button 
                                 onClick={() => handleApprove(stage.id)}
-                                className="bg-green-600 hover:bg-green-700 flex-1"
+                                disabled={!comments[stage.id]?.trim()}
+                                className="bg-green-600 hover:bg-green-700 flex-1 disabled:opacity-50"
                               >
                                 <CheckCircle className="h-4 w-4 mr-2" />
                                 Approve Stage
@@ -304,7 +311,8 @@ export default function Workflow({ user }: WorkflowProps) {
                               <Button 
                                 variant="destructive"
                                 onClick={() => handleReject(stage.id)}
-                                className="flex-1"
+                                disabled={!comments[stage.id]?.trim()}
+                                className="flex-1 disabled:opacity-50"
                               >
                                 <XCircle className="h-4 w-4 mr-2" />
                                 Reject Stage
@@ -346,41 +354,56 @@ export default function Workflow({ user }: WorkflowProps) {
                           {stage.initiative?.title}
                         </CardTitle>
                         <p className="text-lg text-muted-foreground">
-                          Stage {stage.stageNumber}: {stage.stageName}
+                          {stage.stageName}
                         </p>
                       </div>
                       <Badge className="bg-yellow-500">PENDING</Badge>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm bg-muted p-4 rounded-lg">
                       <div>
-                        <span className="font-medium">Site:</span>
-                        <p>{stage.initiative?.site}</p>
+                        <span className="font-medium text-muted-foreground">Initiative ID:</span>
+                        <p className="font-medium">{stage.initiative?.id}</p>
                       </div>
                       <div>
-                        <span className="font-medium">Discipline:</span>
-                        <p>{stage.initiative?.discipline}</p>
+                        <span className="font-medium text-muted-foreground">Site:</span>
+                        <p className="font-medium">{stage.initiative?.site}</p>
                       </div>
                       <div>
-                        <span className="font-medium">Priority:</span>
-                        <p>{stage.initiative?.priority}</p>
+                        <span className="font-medium text-muted-foreground">Discipline:</span>
+                        <p className="font-medium">{stage.initiative?.discipline}</p>
                       </div>
                       <div>
-                        <span className="font-medium">Required Role:</span>
-                        <p>{stage.requiredRole}</p>
+                        <span className="font-medium text-muted-foreground">Priority:</span>
+                        <p className="font-medium">{stage.initiative?.priority}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-muted-foreground">Expected Savings:</span>
+                        <p className="font-medium">{stage.initiative?.expectedSavings}</p>
                       </div>
                     </div>
-                    <Textarea
-                      placeholder="Add comments (optional)"
-                      value={comments[stage.id] || ''}
-                      onChange={(e) => setComments(prev => ({ ...prev, [stage.id]: e.target.value }))}
-                      className="min-h-[80px]"
-                    />
+                    <div className="text-sm">
+                      <span className="font-medium text-muted-foreground">Required Role:</span>
+                      <span className="ml-2 font-medium">{stage.requiredRole}</span>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-red-600">
+                        Comments (Required)*
+                      </label>
+                      <Textarea
+                        placeholder="Please provide your comments for this approval/rejection..."
+                        value={comments[stage.id] || ''}
+                        onChange={(e) => setComments(prev => ({ ...prev, [stage.id]: e.target.value }))}
+                        className="min-h-[100px] mt-2"
+                        required
+                      />
+                    </div>
                     <div className="flex gap-3">
                       <Button 
                         onClick={() => handleApprove(stage.id)}
-                        className="bg-green-600 hover:bg-green-700 flex-1"
+                        disabled={!comments[stage.id]?.trim()}
+                        className="bg-green-600 hover:bg-green-700 flex-1 disabled:opacity-50"
                       >
                         <CheckCircle className="h-4 w-4 mr-2" />
                         Approve
@@ -388,7 +411,8 @@ export default function Workflow({ user }: WorkflowProps) {
                       <Button 
                         variant="destructive"
                         onClick={() => handleReject(stage.id)}
-                        className="flex-1"
+                        disabled={!comments[stage.id]?.trim()}
+                        className="flex-1 disabled:opacity-50"
                       >
                         <XCircle className="h-4 w-4 mr-2" />
                         Reject

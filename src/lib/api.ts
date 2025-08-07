@@ -140,13 +140,13 @@ export const workflowAPI = {
     return response.data;
   },
   
-  approveStage: async (stageId: number, comments?: string) => {
-    const response = await api.post(`/workflow/stage/${stageId}/approve`, comments);
+  approveStage: async (stageId: number, comments: string) => {
+    const response = await api.post(`/workflow/stage/${stageId}/approve`, { comments });
     return response.data;
   },
   
   rejectStage: async (stageId: number, comments: string) => {
-    const response = await api.post(`/workflow/stage/${stageId}/reject`, comments);
+    const response = await api.post(`/workflow/stage/${stageId}/reject`, { comments });
     return response.data;
   },
   

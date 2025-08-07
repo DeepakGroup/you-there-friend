@@ -1,7 +1,11 @@
 package com.company.opexhub.config;
 
 import com.company.opexhub.entity.User;
+import com.company.opexhub.entity.Initiative;
+import com.company.opexhub.entity.WorkflowStage;
 import com.company.opexhub.repository.UserRepository;
+import com.company.opexhub.repository.InitiativeRepository;
+import com.company.opexhub.repository.WorkflowStageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,12 +20,21 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private InitiativeRepository initiativeRepository;
+
+    @Autowired
+    private WorkflowStageRepository workflowStageRepository;
+
     @Override
     public void run(String... args) throws Exception {
         // Check if users already exist
         if (userRepository.count() == 0) {
             initializeUsers();
         }
+        
+        // Check if workflow stages need to be initialized for existing initiatives
+        initializeWorkflowStages();
     }
 
     private void initializeUsers() {
@@ -71,5 +84,52 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("Email: vikram.manager@godeepak.com | Password: password123 | Role: Site Manager");
         System.out.println("Email: neha.lead@godeepak.com | Password: password123 | Role: Initiative Lead");
         System.out.println("========================");
+    }
+
+    private void initializeWorkflowStages() {
+        // Workflow stage definitions with proper names
+        String[][] stageDefinitions = {
+            {"1", "Register Initiative", "INIT_LEAD"},
+            {"2", "Approval (Decision Point)", "APPROVER"},
+            {"3", "Assign Initiative ID & Define Responsibilities", "SITE_TSO_LEAD"},
+            {"4", "MOC Required? (Decision Point)", "INIT_LEAD"},
+            {"5", "MOC", "INIT_LEAD"},
+            {"6", "MOC Approved", "INIT_LEAD"},
+            {"7", "CAPEX Required? (Decision Point)", "INIT_LEAD"},
+            {"8", "CAPEX Process", "SITE_TSO_LEAD"},
+            {"9", "CAPEX Approved", "SITE_TSO_LEAD"},
+            {"10", "Prepare Initiative Timeline Tracker", "INIT_LEAD"},
+            {"11", "Trial Implementation and Performance Check", "SITE_TSO_LEAD"},
+            {"12", "Periodic Status Review with CMO", "CORP_TSO"},
+            {"13", "Savings Monitoring for 1 Month", "SITE_CORP_TSO"},
+            {"14", "Savings Validation with F&A", "SITE_CORP_TSO"},
+            {"15", "Initiative Closure", "SITE_TSO_LEAD"}
+        };
+
+        // Initialize workflow stages for all initiatives that don't have them
+        for (Initiative initiative : initiativeRepository.findAll()) {
+            if (workflowStageRepository.findByInitiativeIdOrderByStageNumber(initiative.getId()).isEmpty()) {
+                for (String[] stageDef : stageDefinitions) {
+                    WorkflowStage stage = new WorkflowStage();
+                    stage.setStageNumber(Integer.parseInt(stageDef[0]));
+                    stage.setStageName(stageDef[1]);
+                    stage.setRequiredRole(stageDef[2]);
+                    stage.setInitiative(initiative);
+                    
+                    // Set status based on current stage
+                    if (Integer.parseInt(stageDef[0]) < initiative.getCurrentStage()) {
+                        stage.setStatus("approved");
+                        stage.setApprovedBy("System");
+                    } else if (Integer.parseInt(stageDef[0]) == initiative.getCurrentStage()) {
+                        stage.setStatus("pending");
+                    } else {
+                        stage.setStatus("not_started");
+                    }
+                    
+                    workflowStageRepository.save(stage);
+                }
+                System.out.println("Initialized workflow stages for initiative: " + initiative.getTitle());
+            }
+        }
     }
 }

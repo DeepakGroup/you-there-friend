@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/workflow")
@@ -25,9 +26,13 @@ public class WorkflowController {
 
     @PostMapping("/stage/{stageId}/approve")
     public ResponseEntity<?> approveStage(@PathVariable Long stageId,
-                                        @RequestBody(required = false) String comments,
+                                        @RequestBody Map<String, String> requestBody,
                                         @AuthenticationPrincipal UserPrincipal currentUser) {
         try {
+            String comments = requestBody.get("comments");
+            if (comments == null || comments.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "Comments are required for approval"));
+            }
             WorkflowStage stage = workflowService.approveStage(stageId, currentUser.getFullName(), comments);
             return ResponseEntity.ok(new ApiResponse(true, "Stage approved successfully", stage));
         } catch (Exception e) {
@@ -38,9 +43,13 @@ public class WorkflowController {
 
     @PostMapping("/stage/{stageId}/reject")
     public ResponseEntity<?> rejectStage(@PathVariable Long stageId,
-                                       @RequestBody String comments,
+                                       @RequestBody Map<String, String> requestBody,
                                        @AuthenticationPrincipal UserPrincipal currentUser) {
         try {
+            String comments = requestBody.get("comments");
+            if (comments == null || comments.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "Comments are required for rejection"));
+            }
             WorkflowStage stage = workflowService.rejectStage(stageId, currentUser.getFullName(), comments);
             return ResponseEntity.ok(new ApiResponse(true, "Stage rejected", stage));
         } catch (Exception e) {

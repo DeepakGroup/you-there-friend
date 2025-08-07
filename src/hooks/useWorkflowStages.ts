@@ -64,8 +64,13 @@ export const useApproveStage = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (data: { stageId: number; comments?: string }) => {
+    mutationFn: async (data: { stageId: number; comments: string }) => {
       console.log('useApproveStage - Sending data:', data);
+      
+      if (!data.comments || data.comments.trim() === '') {
+        throw new Error('Comments are required for approval');
+      }
+      
       try {
         const result = await workflowAPI.approveStage(data.stageId, data.comments);
         console.log('useApproveStage - Success:', result);
@@ -97,6 +102,10 @@ export const useRejectStage = () => {
   
   return useMutation({
     mutationFn: async (data: { stageId: number; comments: string }) => {
+      if (!data.comments || data.comments.trim() === '') {
+        throw new Error('Comments are required for rejection');
+      }
+      
       try {
         return await workflowAPI.rejectStage(data.stageId, data.comments);
       } catch (error) {
