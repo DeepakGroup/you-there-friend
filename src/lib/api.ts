@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_USE_MOCK_DATA === 'true' 
-  ? 'http://mock-disabled' 
-  : 'http://localhost:9090/api';
+const API_BASE_URL = 'http://localhost:9090/api';
 
 // Create axios instance with default config
 const api = axios.create({

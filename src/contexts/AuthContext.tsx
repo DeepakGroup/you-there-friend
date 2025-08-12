@@ -101,41 +101,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: any) {
       console.error('AuthContext: Login error:', error);
       
-      // Fallback for testing when backend is not available
-      if (error.code === 'ECONNREFUSED' || error.message.includes('ECONNREFUSED') || error.message.includes('Network Error')) {
-        console.log('AuthContext: Backend not available, using mock login...');
-        
-        // Mock successful login for testing
-        if (email === 'john.lead@company.com' && password === 'password123') {
-          const mockUserData = {
-            id: '1',
-            email: 'john.lead@company.com',
-            fullName: 'John Smith',
-            site: 'LAM',
-            discipline: 'MECH',
-            role: 'INIT_LEAD',
-            roleName: 'Initiative Lead',
-          };
-          
-          console.log('AuthContext: Mock login successful, setting user data:', mockUserData);
-          
-          // Store mock data
-          localStorage.setItem("opex_user", JSON.stringify(mockUserData));
-          localStorage.setItem("opex_token", 'mock-jwt-token');
-          
-          // Update state
-          setUser(mockUserData);
-          console.log('AuthContext: Mock user state updated successfully');
-          
-          // Navigate to dashboard immediately
-          console.log('AuthContext: Navigating to dashboard...');
-          navigate('/', { replace: true });
-          
-          return { success: true };
-        } else {
-          return { success: false, error: 'Invalid mock credentials. Use john.lead@company.com / password123' };
-        }
-      }
       
       let errorMessage = 'Login failed';
       if (error.response?.data?.message) {
