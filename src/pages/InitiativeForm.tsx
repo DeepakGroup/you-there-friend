@@ -50,6 +50,25 @@ export default function InitiativeForm({ user }: InitiativeFormProps) {
   const [files, setFiles] = useState<File[]>([]);
   const { toast } = useToast();
 
+  // Check if user has permission to create initiatives
+  if (user.role !== "SITE_TSD_LEAD") {
+    return (
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <h1 className="text-2xl font-bold text-destructive mb-4">Access Denied</h1>
+            <p className="text-muted-foreground">
+              Only users with SITE TSD LEAD role can create new initiatives.
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Your current role: {user.role}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const createInitiativeMutation = useCreateInitiative();
 
   const form = useForm<FormData>({

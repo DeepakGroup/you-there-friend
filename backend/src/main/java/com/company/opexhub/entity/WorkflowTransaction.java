@@ -48,18 +48,6 @@ public class WorkflowTransaction {
     @Column(name = "assigned_user_id")
     private Long assignedUserId; // for IL assignment
 
-    @Column(name = "moc_number")
-    private String mocNumber;
-
-    @Column(name = "capex_number")
-    private String capexNumber;
-
-    @Column(name = "requires_moc")
-    private Boolean requiresMoc;
-
-    @Column(name = "requires_capex")
-    private Boolean requiresCapex;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -129,18 +117,6 @@ public class WorkflowTransaction {
 
     public Long getAssignedUserId() { return assignedUserId; }
     public void setAssignedUserId(Long assignedUserId) { this.assignedUserId = assignedUserId; }
-
-    public String getMocNumber() { return mocNumber; }
-    public void setMocNumber(String mocNumber) { this.mocNumber = mocNumber; }
-
-    public String getCapexNumber() { return capexNumber; }
-    public void setCapexNumber(String capexNumber) { this.capexNumber = capexNumber; }
-
-    public Boolean getRequiresMoc() { return requiresMoc; }
-    public void setRequiresMoc(Boolean requiresMoc) { this.requiresMoc = requiresMoc; }
-
-    public Boolean getRequiresCapex() { return requiresCapex; }
-    public void setRequiresCapex(Boolean requiresCapex) { this.requiresCapex = requiresCapex; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

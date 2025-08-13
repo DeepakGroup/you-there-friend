@@ -301,21 +301,29 @@ export default function NewWorkflow({ user }: NewWorkflowProps) {
                           </div>
                         )}
 
-                        {(transaction.mocNumber || transaction.requiresMoc !== null) && (
-                          <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg text-sm">
-                            <span className="font-medium">MOC Status:</span>
-                            <span className="ml-2">
-                              {transaction.requiresMoc ? `Required - ${transaction.mocNumber || 'Number Pending'}` : 'Not Required'}
-                            </span>
-                          </div>
-                        )}
-
-                        {(transaction.capexNumber || transaction.requiresCapex !== null) && (
-                          <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg text-sm">
-                            <span className="font-medium">CAPEX Status:</span>
-                            <span className="ml-2">
-                              {transaction.requiresCapex ? `Required - ${transaction.capexNumber || 'Number Pending'}` : 'Not Required'}
-                            </span>
+                        {/* Next pending stage info */}
+                        {workflowTransactions.length > 0 && (
+                          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm">
+                            {(() => {
+                              const nextPendingTransaction = workflowTransactions.find((t: any) => t.approveStatus === 'pending');
+                              if (nextPendingTransaction) {
+                                return (
+                                  <>
+                                    <span className="font-medium">Next Pending:</span>
+                                    <span className="ml-2">
+                                      Stage {nextPendingTransaction.stageNumber}: {nextPendingTransaction.stageName} 
+                                      (Pending with: {getRoleCodeDescription(nextPendingTransaction.requiredRole)})
+                                    </span>
+                                  </>
+                                );
+                              }
+                              return (
+                                <>
+                                  <span className="font-medium">Status:</span>
+                                  <span className="ml-2 text-green-600">All stages completed</span>
+                                </>
+                              );
+                            })()}
                           </div>
                         )}
 

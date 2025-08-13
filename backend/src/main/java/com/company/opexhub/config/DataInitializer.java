@@ -38,37 +38,51 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeUsers() {
-        // Create demo users for testing - All users assigned to NDS site with Indian names
+        // Create 11 users for 11 workflow stages - All users assigned to NDS site
         User[] demoUsers = {
-            new User("Rajesh Kumar", "rajesh.lead@godeepak.com", 
+            // Stage 1: Register Initiative - Initiative Lead
+            new User("Rajesh Kumar", "rajesh.kumar@godeepak.com", 
                     passwordEncoder.encode("password123"), "NDS", "MECH", "INIT_LEAD", "Initiative Lead"),
             
-            new User("Priya Sharma", "priya.approver@godeepak.com", 
+            // Stage 2: Approval (Decision Point) - Approver  
+            new User("Priya Sharma", "priya.sharma@godeepak.com", 
                     passwordEncoder.encode("password123"), "NDS", "ELECT", "APPROVER", "Department Approver"),
             
-            new User("Amit Patel", "amit.tso@godeepak.com", 
+            // Stage 3: Assign Initiative ID & Define Responsibilities - Site TSO Lead
+            new User("Amit Patel", "amit.patel@godeepak.com", 
                     passwordEncoder.encode("password123"), "NDS", "PROCESS", "SITE_TSO_LEAD", "Site TSO Lead"),
             
-            new User("Deepika Singh", "deepika.corp@godeepak.com", 
-                    passwordEncoder.encode("password123"), "NDS", "OPEX", "CORP_TSO", "Corporate TSO"),
+            // Stages 4-6: MOC Related - Initiative Lead  
+            new User("Deepika Singh", "deepika.singh@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "OPEX", "INIT_LEAD", "Initiative Lead"),
             
-            new User("Vikram Gupta", "vikram.manager@godeepak.com", 
-                    passwordEncoder.encode("password123"), "NDS", "MAINT", "SITE_MANAGER", "Site Manager"),
+            // Stages 7-9: CAPEX Related - Site TSO Lead
+            new User("Vikram Gupta", "vikram.gupta@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "MAINT", "SITE_TSO_LEAD", "Site TSO Lead"),
             
-            new User("Neha Agarwal", "neha.lead@godeepak.com", 
+            // Stage 10: Prepare Initiative Timeline Tracker - Initiative Lead
+            new User("Neha Agarwal", "neha.agarwal@godeepak.com", 
                     passwordEncoder.encode("password123"), "NDS", "OP", "INIT_LEAD", "Initiative Lead"),
             
-            new User("Suresh Reddy", "suresh.approver@godeepak.com", 
-                    passwordEncoder.encode("password123"), "NDS", "EG", "APPROVER", "Department Approver"),
+            // Stage 11: Trial Implementation - Site TSO Lead
+            new User("Suresh Reddy", "suresh.reddy@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "EG", "SITE_TSO_LEAD", "Site TSO Lead"),
             
-            new User("Kavya Nair", "kavya.tso@godeepak.com", 
-                    passwordEncoder.encode("password123"), "NDS", "EV", "SITE_TSO_LEAD", "Site TSO Lead"),
+            // Stage 12: Periodic Status Review with CMO - Corporate TSO
+            new User("Kavya Nair", "kavya.nair@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "EV", "CORP_TSO", "Corporate TSO"),
             
-            new User("Rohit Jain", "rohit.corp@godeepak.com", 
-                    passwordEncoder.encode("password123"), "NDS", "SF", "CORP_TSO", "Corporate TSO"),
+            // Stages 13-14: Savings Monitoring & Validation - Site Corp TSO
+            new User("Rohit Jain", "rohit.jain@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "SF", "SITE_CORP_TSO", "Site Corp TSO"),
             
-            new User("Ananya Verma", "ananya.manager@godeepak.com", 
-                    passwordEncoder.encode("password123"), "NDS", "QA", "SITE_MANAGER", "Site Manager")
+            // Stage 15: Initiative Closure - Site TSO Lead
+            new User("Ananya Verma", "ananya.verma@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "QA", "SITE_TSO_LEAD", "Site TSO Lead"),
+            
+            // Only SITE TSD LEAD can create new initiatives
+            new User("Manoj Tiwari", "manoj.tiwari@godeepak.com", 
+                    passwordEncoder.encode("password123"), "NDS", "TSD", "SITE_TSD_LEAD", "Site TSD Lead")
         };
 
         for (User user : demoUsers) {
@@ -77,17 +91,22 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("Demo users initialized successfully!");
         System.out.println("=== LOGIN CREDENTIALS (All NDS Site Users) ===");
-        System.out.println("Email: rajesh.lead@godeepak.com | Password: password123 | Role: Initiative Lead");
-        System.out.println("Email: priya.approver@godeepak.com | Password: password123 | Role: Department Approver");
-        System.out.println("Email: amit.tso@godeepak.com | Password: password123 | Role: Site TSO Lead");
-        System.out.println("Email: deepika.corp@godeepak.com | Password: password123 | Role: Corporate TSO");
-        System.out.println("Email: vikram.manager@godeepak.com | Password: password123 | Role: Site Manager");
-        System.out.println("Email: neha.lead@godeepak.com | Password: password123 | Role: Initiative Lead");
+        System.out.println("Email: rajesh.kumar@godeepak.com | Password: password123 | Role: Initiative Lead (Stage 1)");
+        System.out.println("Email: priya.sharma@godeepak.com | Password: password123 | Role: Department Approver (Stage 2)");
+        System.out.println("Email: amit.patel@godeepak.com | Password: password123 | Role: Site TSO Lead (Stage 3)");
+        System.out.println("Email: deepika.singh@godeepak.com | Password: password123 | Role: Initiative Lead (MOC Stages)");
+        System.out.println("Email: vikram.gupta@godeepak.com | Password: password123 | Role: Site TSO Lead (CAPEX Stages)");
+        System.out.println("Email: neha.agarwal@godeepak.com | Password: password123 | Role: Initiative Lead (Stage 10)");
+        System.out.println("Email: suresh.reddy@godeepak.com | Password: password123 | Role: Site TSO Lead (Stage 11)");
+        System.out.println("Email: kavya.nair@godeepak.com | Password: password123 | Role: Corporate TSO (Stage 12)");
+        System.out.println("Email: rohit.jain@godeepak.com | Password: password123 | Role: Site Corp TSO (Stages 13-14)");
+        System.out.println("Email: ananya.verma@godeepak.com | Password: password123 | Role: Site TSO Lead (Stage 15)");
+        System.out.println("Email: manoj.tiwari@godeepak.com | Password: password123 | Role: Site TSD Lead (CREATE INITIATIVES)");
         System.out.println("========================");
     }
 
     private void initializeWorkflowStages() {
-        // Workflow stage definitions with proper names
+        // Workflow stage definitions with proper names and roles
         String[][] stageDefinitions = {
             {"1", "Register Initiative", "INIT_LEAD"},
             {"2", "Approval (Decision Point)", "APPROVER"},

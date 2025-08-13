@@ -65,6 +65,12 @@ public class Initiative {
     @Column(name = "requires_capex")
     private Boolean requiresCapex = false;
 
+    @Column(name = "moc_number")
+    private String mocNumber;
+
+    @Column(name = "capex_number")
+    private String capexNumber;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -163,6 +169,12 @@ public class Initiative {
 
     public Boolean getRequiresCapex() { return requiresCapex; }
     public void setRequiresCapex(Boolean requiresCapex) { this.requiresCapex = requiresCapex; }
+
+    public String getMocNumber() { return mocNumber; }
+    public void setMocNumber(String mocNumber) { this.mocNumber = mocNumber; }
+
+    public String getCapexNumber() { return capexNumber; }
+    public void setCapexNumber(String capexNumber) { this.capexNumber = capexNumber; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

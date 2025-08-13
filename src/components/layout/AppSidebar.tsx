@@ -106,11 +106,24 @@ const groupItems = (items: typeof navigationItems) => {
   return grouped;
 };
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  user?: { role?: string };
+}
+
+export function AppSidebar({ user }: AppSidebarProps = {}) {
   const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
-  const groupedItems = groupItems(navigationItems);
+  
+  // Filter navigation items based on user role
+  const filteredNavigationItems = navigationItems.filter(item => {
+    if (item.title === "New Initiative") {
+      return user?.role === "SITE_TSD_LEAD";
+    }
+    return true;
+  });
+  
+  const groupedItems = groupItems(filteredNavigationItems);
   const isCollapsed = state === "collapsed";
 
   const isActive = (path: string) => {

@@ -58,10 +58,6 @@ public class WorkflowTransactionController {
             String comment = (String) requestBody.get("comment");
             Long assignedUserId = requestBody.get("assignedUserId") != null ? 
                     Long.valueOf(requestBody.get("assignedUserId").toString()) : null;
-            String mocNumber = (String) requestBody.get("mocNumber");
-            String capexNumber = (String) requestBody.get("capexNumber");
-            Boolean requiresMoc = (Boolean) requestBody.get("requiresMoc");
-            Boolean requiresCapex = (Boolean) requestBody.get("requiresCapex");
 
             if (comment == null || comment.trim().isEmpty()) {
                 return ResponseEntity.badRequest()
@@ -69,8 +65,7 @@ public class WorkflowTransactionController {
             }
 
             WorkflowTransaction transaction = workflowTransactionService.processStageAction(
-                    transactionId, action, comment, currentUser.getFullName(),
-                    assignedUserId, mocNumber, capexNumber, requiresMoc, requiresCapex);
+                    transactionId, action, comment, currentUser.getFullName(), assignedUserId);
 
             return ResponseEntity.ok(new ApiResponse(true, 
                     "Stage " + action + " successfully", transaction));

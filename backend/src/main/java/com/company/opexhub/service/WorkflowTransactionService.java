@@ -93,9 +93,7 @@ public class WorkflowTransactionService {
 
     @Transactional
     public WorkflowTransaction processStageAction(Long transactionId, String action, String comment, 
-                                                String actionBy, Long assignedUserId, 
-                                                String mocNumber, String capexNumber,
-                                                Boolean requiresMoc, Boolean requiresCapex) {
+                                                String actionBy, Long assignedUserId) {
         WorkflowTransaction transaction = workflowTransactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Workflow transaction not found"));
 
@@ -112,18 +110,6 @@ public class WorkflowTransactionService {
         // Store additional data based on stage
         if (assignedUserId != null) {
             transaction.setAssignedUserId(assignedUserId);
-        }
-        if (mocNumber != null) {
-            transaction.setMocNumber(mocNumber);
-        }
-        if (capexNumber != null) {
-            transaction.setCapexNumber(capexNumber);
-        }
-        if (requiresMoc != null) {
-            transaction.setRequiresMoc(requiresMoc);
-        }
-        if (requiresCapex != null) {
-            transaction.setRequiresCapex(requiresCapex);
         }
 
         WorkflowTransaction savedTransaction = workflowTransactionRepository.save(transaction);
