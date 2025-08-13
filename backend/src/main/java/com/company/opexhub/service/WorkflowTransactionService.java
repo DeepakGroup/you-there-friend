@@ -3,9 +3,11 @@ package com.company.opexhub.service;
 import com.company.opexhub.entity.Initiative;
 import com.company.opexhub.entity.User;
 import com.company.opexhub.entity.WorkflowTransaction;
+import com.company.opexhub.entity.WfMaster;
 import com.company.opexhub.repository.InitiativeRepository;
 import com.company.opexhub.repository.UserRepository;
 import com.company.opexhub.repository.WorkflowTransactionRepository;
+import com.company.opexhub.repository.WfMasterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,9 @@ public class WorkflowTransactionService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private WfMasterRepository wfMasterRepository;
+
     public List<WorkflowTransaction> getWorkflowTransactions(Long initiativeId) {
         return workflowTransactionRepository.findByInitiativeIdOrderByStageNumber(initiativeId);
     }
@@ -40,51 +45,34 @@ public class WorkflowTransactionService {
 
     @Transactional
     public void createInitialWorkflowTransactions(Initiative initiative) {
-        String[] stageNames = {
-            "Register Initiative",                    // Step 1
-            "Approval",                              // Step 2
-            "Define Responsibilities",               // Step 3
-            "MOC Stage",                            // Step 4
-            "CAPEX Stage",                          // Step 5
-            "Initiative Timeline Tracker",          // Step 6
-            "Trial Implementation & Performance Check", // Step 7
-            "Periodic Status Review with CMO",      // Step 8
-            "Savings Monitoring (1 Month)",         // Step 9
-            "Saving Validation with F&A",          // Step 10
-            "Initiative Closure"                    // Step 11
-        };
+        // Get workflow configuration from wf_master table
+        List<WfMaster> workflowStages = wfMasterRepository.findBySiteAndIsActiveOrderByStageNumber(
+            initiative.getSite(), true);
 
-        String[] roleCodes = {
-            "STLD",    // Site TSD Lead
-            "SH",      // Site Head
-            "EH",      // Engineering Head
-            "IL",      // Initiative Lead
-            "IL",      // Initiative Lead
-            "IL",      // Initiative Lead
-            "STLD",    // Site TSD Lead
-            "CTSD",    // Corp TSD
-            "STLD",    // Site TSD Lead
-            "STLD",    // Site TSD Lead
-            "STLD"     // Site TSD Lead
-        };
+        if (workflowStages.isEmpty()) {
+            throw new RuntimeException("No workflow configuration found for site: " + initiative.getSite());
+        }
 
-        for (int i = 0; i < stageNames.length; i++) {
+        for (WfMaster wfStage : workflowStages) {
             WorkflowTransaction transaction = new WorkflowTransaction(
                 initiative.getId(),
-                i + 1,
-                stageNames[i],
+                wfStage.getStageNumber(),
+                wfStage.getStageName(),
                 initiative.getSite(),
-                roleCodes[i],
-                roleCodes[i]
+                wfStage.getRoleCode(),
+                wfStage.getUserEmail()
             );
 
-            if (i == 0) {
+            if (wfStage.getStageNumber() == 1) {
                 // First stage is auto-approved
                 transaction.setApproveStatus("approved");
                 transaction.setActionBy(initiative.getCreatedBy().getFullName());
                 transaction.setActionDate(LocalDateTime.now());
                 transaction.setComment("Initiative created and registered");
                 transaction.setPendingWith(null);
+            } else {
+                // Set pending with the user email from wf_master
+                transaction.setPendingWith(wfStage.getUserEmail());
             }
 
             workflowTransactionRepository.save(transaction);
@@ -124,6 +112,11 @@ public class WorkflowTransactionService {
                     .findByInitiativeIdAndStageNumber(initiative.getId(), transaction.getStageNumber() + 1);
             
             if (nextStage.isPresent()) {
+                // Activate next stage
+                WorkflowTransaction nextTransaction = nextStage.get();
+                nextTransaction.setApproveStatus("pending");
+                workflowTransactionRepository.save(nextTransaction);
+                
                 initiative.setCurrentStage(transaction.getStageNumber() + 1);
                 initiative.setStatus("In Progress");
             } else {

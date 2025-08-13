@@ -51,7 +51,7 @@ export default function InitiativeForm({ user }: InitiativeFormProps) {
   const { toast } = useToast();
 
   // Check if user has permission to create initiatives
-  if (user.role !== "SITE_TSD_LEAD") {
+  if (user.role !== "STLD") {
     return (
       <div className="max-w-4xl mx-auto space-y-6">
         <Card>

@@ -118,7 +118,7 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
   // Filter navigation items based on user role
   const filteredNavigationItems = navigationItems.filter(item => {
     if (item.title === "New Initiative") {
-      return user?.role === "SITE_TSD_LEAD";
+      return user?.role === "STLD";
     }
     return true;
   });
