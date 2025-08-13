@@ -107,6 +107,11 @@ public class WorkflowTransactionService {
                 .orElseThrow(() -> new RuntimeException("Initiative not found"));
 
         if ("approved".equals(action)) {
+            // Special handling for Stage 3 - Update IL for stages 4, 5, 6
+            if (transaction.getStageNumber() == 3 && assignedUserId != null) {
+                updateILForStages456(initiative.getId(), assignedUserId);
+            }
+            
             // Move to next stage
             Optional<WorkflowTransaction> nextStage = workflowTransactionRepository
                     .findByInitiativeIdAndStageNumber(initiative.getId(), transaction.getStageNumber() + 1);
@@ -130,6 +135,26 @@ public class WorkflowTransactionService {
 
         initiativeRepository.save(initiative);
         return savedTransaction;
+    }
+
+    @Transactional
+    private void updateILForStages456(Long initiativeId, Long assignedUserId) {
+        // Get the assigned user
+        User assignedUser = userRepository.findById(assignedUserId)
+                .orElseThrow(() -> new RuntimeException("Assigned user not found"));
+
+        // Update stages 4, 5, 6 with the selected IL
+        for (int stageNumber = 4; stageNumber <= 6; stageNumber++) {
+            Optional<WorkflowTransaction> stageTransaction = workflowTransactionRepository
+                    .findByInitiativeIdAndStageNumber(initiativeId, stageNumber);
+            
+            if (stageTransaction.isPresent()) {
+                WorkflowTransaction transaction = stageTransaction.get();
+                transaction.setPendingWith(assignedUser.getEmail());
+                transaction.setAssignedUserId(assignedUserId);
+                workflowTransactionRepository.save(transaction);
+            }
+        }
     }
 
     public Optional<WorkflowTransaction> getCurrentPendingStage(Long initiativeId) {
