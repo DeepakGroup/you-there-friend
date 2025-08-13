@@ -36,6 +36,11 @@ export default function WorkflowStageModal({
   const { data: users = [] } = useUsers();
   const initiativeLeads = users.filter(user => user.role === "IL");
 
+  // Early return if transaction is null
+  if (!transaction) {
+    return null;
+  }
+
   const handleApprove = () => {
     const data: any = {
       transactionId: transaction.id,
@@ -90,6 +95,8 @@ export default function WorkflowStageModal({
   };
 
   const getStageSpecificContent = () => {
+    if (!transaction?.stageNumber) return null;
+    
     switch (transaction.stageNumber) {
       case 3: // Define Responsibilities - Engineering Head assigns Initiative Lead
         return (
