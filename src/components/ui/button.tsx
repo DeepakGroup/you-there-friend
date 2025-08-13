@@ -22,10 +22,11 @@ const buttonVariants = cva(
         warning: "bg-warning text-warning-foreground hover:bg-warning/90",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "h-9 px-3 py-2 laptop-14:h-10 laptop-14:px-4",
+        sm: "h-8 px-2.5 laptop-14:h-9 laptop-14:px-3",
+        lg: "h-10 px-6 laptop-14:h-11 laptop-14:px-8",
+        icon: "h-8 w-8 laptop-14:h-9 laptop-14:w-9",
+        compact: "h-7 px-2 text-xs",
       },
     },
     defaultVariants: {

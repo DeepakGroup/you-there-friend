@@ -108,6 +108,53 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-size: 0.9375rem; /* 15px - optimal for 14-inch laptop */
+    line-height: 1.375;
+  }
+  
+  /* 14-inch laptop optimizations */
+  @media (min-width: 1366px) and (max-width: 1600px) {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+}
+
+/* Component-specific optimizations for 14-inch laptops */
+@layer components {
+  .btn-compact {
+    @apply px-3 py-1.5 text-sm;
+  }
+  
+  .card-compact {
+    @apply p-4 space-y-3;
+  }
+  
+  .header-compact {
+    @apply h-14;
+  }
+  
+  .sidebar-compact {
+    @apply w-56;
+  }
+  
+  .text-laptop {
+    font-size: 0.9375rem;
+    line-height: 1.375;
+  }
+  
+  .modal-laptop {
+    @apply max-w-2xl max-h-[85vh];
+  }
+  
+  .table-laptop {
+    @apply text-sm;
+  }
+  
+  .table-laptop th,
+  .table-laptop td {
+    @apply px-3 py-2;
   }
 }

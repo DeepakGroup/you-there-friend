@@ -140,14 +140,14 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
   return (
     <Sidebar className={isCollapsed ? "w-14" : "w-64"} collapsible="icon">
       <SidebarContent className="bg-card border-r border-border">
-        {/* Logo Section */}
-        <div className="p-4 border-b border-border">
+        {/* Logo Section - Compact for 14-inch laptops */}
+        <div className="p-3 laptop-14:p-4 border-b border-border">
           <div className="flex items-center gap-2">
-            <Building2 className="h-8 w-8 text-primary" />
+            <Building2 className="h-6 w-6 laptop-14:h-7 laptop-14:w-7 text-primary" />
             {!isCollapsed && (
               <div>
-                <h1 className="text-lg font-bold text-foreground">OpEx Hub</h1>
-                <p className="text-xs text-muted-foreground">Operational Excellence</p>
+                <h1 className="text-base laptop-14:text-lg font-bold text-foreground">OpEx Hub</h1>
+                <p className="text-2xs laptop-14:text-xs text-muted-foreground">Operational Excellence</p>
               </div>
             )}
           </div>
@@ -155,9 +155,9 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
 
         {/* Navigation Groups */}
         {Object.entries(groupedItems).map(([groupName, items]) => (
-          <SidebarGroup key={groupName}>
+          <SidebarGroup key={groupName} className="py-2">
             {!isCollapsed && (
-              <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground">
+              <SidebarGroupLabel className="text-2xs laptop-14:text-xs font-semibold text-muted-foreground px-3">
                 {groupName}
               </SidebarGroupLabel>
             )}
@@ -165,14 +165,14 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
               <SidebarMenu>
                 {items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton asChild className="py-2 text-sm">
                       <NavLink 
                         to={item.url} 
                         end={item.url === "/"} 
                         className={getNavCls({ isActive: isActive(item.url) })}
                       >
                         <item.icon className="h-4 w-4" />
-                        {!isCollapsed && <span>{item.title}</span>}
+                        {!isCollapsed && <span className="text-sm">{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

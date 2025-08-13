@@ -12,12 +12,49 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: '1rem',
 			screens: {
-				'2xl': '1400px'
+				'sm': '640px',
+				'md': '768px',
+				'lg': '1024px',
+				'xl': '1280px',
+				'2xl': '1400px',
+				'laptop-14': '1366px', // 14-inch laptop target
 			}
 		},
+		screens: {
+			'xs': '475px',
+			'sm': '640px',
+			'md': '768px',
+			'lg': '1024px',
+			'xl': '1280px',
+			'2xl': '1536px',
+			'laptop-14': '1366px', // 14-inch laptop breakpoint
+		},
 		extend: {
+			fontFamily: {
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'mono': ['JetBrains Mono', 'monospace'],
+			},
+			fontSize: {
+				'2xs': ['0.625rem', { lineHeight: '0.75rem' }],
+				'xs': ['0.75rem', { lineHeight: '1rem' }],
+				'sm': ['0.875rem', { lineHeight: '1.25rem' }],
+				'base': ['0.9375rem', { lineHeight: '1.375rem' }], // Optimized for 14-inch
+				'lg': ['1.125rem', { lineHeight: '1.75rem' }],
+				'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+				'2xl': ['1.5rem', { lineHeight: '2rem' }],
+			},
+			spacing: {
+				'0.5': '0.125rem',
+				'1.5': '0.375rem',
+				'2.5': '0.625rem',
+				'3.5': '0.875rem',
+				'4.5': '1.125rem',
+				'5.5': '1.375rem',
+				'18': '4.5rem',
+				'22': '5.5rem',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

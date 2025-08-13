@@ -29,34 +29,34 @@ export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
         <AppSidebar user={user} />
         
         <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <header className="h-16 border-b border-border bg-card px-6 flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          {/* Header - Optimized for 14-inch laptops */}
+          <header className="h-14 border-b border-border bg-card px-4 laptop-14:px-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
               <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-              <div className="relative max-w-md">
+              <div className="relative max-w-sm laptop-14:max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input 
                   placeholder="Search initiatives..." 
-                  className="pl-10 w-80"
+                  className="pl-10 w-64 laptop-14:w-80 text-sm"
                 />
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="relative">
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="relative">
                 <Bell className="h-4 w-4" />
-                <span className="absolute -top-1 -right-1 h-3 w-3 bg-primary rounded-full text-xs text-primary-foreground flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-primary rounded-full text-xs text-primary-foreground flex items-center justify-center">
                   3
                 </span>
               </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2 px-3">
+                  <Button variant="ghost" className="flex items-center gap-2 px-2 py-1.5 h-auto">
                     <User className="h-4 w-4" />
                     <div className="hidden md:flex flex-col items-start">
-                      <span className="text-sm font-medium">{user.fullName}</span>
-                      <span className="text-xs text-muted-foreground">{user.roleName}</span>
+                      <span className="text-sm font-medium leading-none">{user.fullName}</span>
+                      <span className="text-xs text-muted-foreground leading-none mt-0.5">{user.roleName}</span>
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
@@ -82,9 +82,11 @@ export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
             </div>
           </header>
 
-          {/* Main Content */}
-          <main className="flex-1 p-6 overflow-auto">
-            {children}
+          {/* Main Content - Optimized spacing for 14-inch laptops */}
+          <main className="flex-1 p-4 laptop-14:p-6 overflow-auto">
+            <div className="container mx-auto max-w-none">
+              {children}
+            </div>
           </main>
         </div>
       </div>

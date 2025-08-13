@@ -262,24 +262,24 @@ export default function WorkflowStageModal({
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Please provide your comments for this stage..."
-              className="min-h-[100px] mt-2"
+              className="min-h-[80px] laptop-14:min-h-[100px] mt-2"
               required
             />
           </div>
 
           {/* Action buttons */}
           {transaction.stageNumber === 6 ? (
-            <div className="flex gap-3">
-              <Button onClick={onClose} variant="outline" className="flex-1">
+            <div className="flex gap-2 laptop-14:gap-3">
+              <Button onClick={onClose} variant="outline" className="flex-1 text-sm">
                 Go to Timeline Tracker
               </Button>
             </div>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex gap-2 laptop-14:gap-3">
               <Button 
                 onClick={handleApprove}
                 disabled={!isFormValid() || isLoading}
-                className="bg-green-600 hover:bg-green-700 flex-1"
+                className="bg-green-600 hover:bg-green-700 flex-1 text-sm"
               >
                 <CheckCircle className="h-4 w-4 mr-2" />
                 {isLoading ? "Processing..." : "Approve & Continue"}
@@ -288,7 +288,7 @@ export default function WorkflowStageModal({
                 variant="destructive"
                 onClick={handleReject}
                 disabled={!comment.trim() || isLoading}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 <XCircle className="h-4 w-4 mr-2" />
                 {isLoading ? "Processing..." : "Reject"}
