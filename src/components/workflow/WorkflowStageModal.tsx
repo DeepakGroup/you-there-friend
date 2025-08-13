@@ -33,8 +33,12 @@ export default function WorkflowStageModal({
   const [capexRequired, setCapexRequired] = useState<string>("");
   const [capexNumber, setCapexNumber] = useState("");
 
-  const { data: users = [] } = useUsers();
+  const { data: users = [], isLoading: usersLoading, error: usersError } = useUsers();
   const initiativeLeads = users.filter(user => user.role === "IL" && user.site === transaction?.site);
+  
+  console.log('Users data:', users);
+  console.log('IL users for site', transaction?.site, ':', initiativeLeads);
+  console.log('Users loading:', usersLoading, 'Error:', usersError);
 
   // Early return if transaction is null
   if (!transaction) {
