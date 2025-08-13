@@ -35,11 +35,8 @@ export default function WorkflowStageModal({
 
   const { data: users = [], isLoading: usersLoading, error: usersError } = useUsers();
   
-  // Get Initiative Leads configured in wf_master for this site (stages 4,5,6)
-  const initiativeLeads = users.filter(user => {
-    // Filter users who are IL role and assigned to stages 4,5,6 for this site
-    return user.role === "IL" && user.site === transaction?.site;
-  });
+  // Get Initiative Leads for this specific site from the dedicated endpoint
+  const initiativeLeads = users.filter(user => user.role === "IL" && user.site === transaction?.site);
   
   console.log('Users data:', users);
   console.log('IL users for site', transaction?.site, ':', initiativeLeads);

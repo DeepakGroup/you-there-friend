@@ -56,4 +56,11 @@ public class UserController {
         List<User> users = userRepository.findByFullNameContaining(name);
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/initiative-leads/{site}")
+    public ResponseEntity<List<User>> getInitiativeLeadsBySite(@PathVariable String site) {
+        // Get IL users specifically for this site
+        List<User> users = userRepository.findBySiteAndRole(site, "IL");
+        return ResponseEntity.ok(users);
+    }
 }

@@ -200,6 +200,11 @@ export const userAPI = {
   getBySiteAndRole: async (site: string, role: string) => {
     const response = await api.get(`/users/site/${site}/role/${role}`);
     return response.data;
+  },
+  
+  getInitiativeLeadsBySite: async (site: string) => {
+    const response = await api.get(`/users/initiative-leads/${site}`);
+    return response.data;
   }
 };
 

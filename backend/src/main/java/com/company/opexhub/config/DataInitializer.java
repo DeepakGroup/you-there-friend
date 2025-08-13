@@ -64,13 +64,11 @@ public class DataInitializer implements CommandLineRunner {
             new User("Rajesh Kumar", "rajesh.kumar@godeepak.com", 
                     passwordEncoder.encode("password123"), "NDS", "MECH", "IL", "Initiative Lead"),
             
-            // Stage 5: CAPEX Stage - IL (Initiative Lead)
-            new User("Deepika Singh", "deepika.singh@godeepak.com", 
-                    passwordEncoder.encode("password123"), "NDS", "OPEX", "IL", "Initiative Lead"),
+            // Stage 5: CAPEX Stage - IL (Initiative Lead) - Same as Stage 4 (Rajesh Kumar)
+            // Removed - using single IL for stages 4,5,6 as per WfMaster configuration
             
-            // Stage 6: Initiative Timeline Tracker - IL (Initiative Lead)
-            new User("Neha Agarwal", "neha.agarwal@godeepak.com", 
-                    passwordEncoder.encode("password123"), "NDS", "OP", "IL", "Initiative Lead"),
+            // Stage 6: Initiative Timeline Tracker - IL (Initiative Lead) - Same as Stage 4 (Rajesh Kumar)  
+            // Removed - using single IL for stages 4,5,6 as per WfMaster configuration
             
             // Stage 7: Trial Implementation - STLD (Site TSD Lead)
             new User("Vikram Gupta", "vikram.gupta@godeepak.com", 
