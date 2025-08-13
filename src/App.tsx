@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import InitiativeForm from "./pages/InitiativeForm";
 import Initiatives from "./pages/Initiatives";
 import Workflow from "./pages/Workflow";
+import NewWorkflow from "./pages/NewWorkflow";
 import Timeline from "./pages/Timeline";
 import KPI from "./pages/KPI";
 import Reports from "./pages/Reports";
@@ -130,7 +131,7 @@ const AppRoutes = () => {
         <ProtectedRoute>
           <AppLayout user={user!} onLogout={logout}>
             <ErrorBoundary>
-              <Workflow user={user!} />
+              <NewWorkflow user={user!} />
             </ErrorBoundary>
           </AppLayout>
         </ProtectedRoute>

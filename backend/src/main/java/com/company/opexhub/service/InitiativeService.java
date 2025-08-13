@@ -28,6 +28,9 @@ public class InitiativeService {
     @Autowired
     private WorkflowStageRepository workflowStageRepository;
 
+    @Autowired
+    private WorkflowTransactionService workflowTransactionService;
+
     public Page<Initiative> getAllInitiatives(Pageable pageable) {
         return initiativeRepository.findAll(pageable);
     }
@@ -82,25 +85,41 @@ public class InitiativeService {
 
         Initiative savedInitiative = initiativeRepository.save(initiative);
 
-        // Create initial workflow stages
+        // Create initial workflow stages and transactions
         createInitialWorkflowStages(savedInitiative);
+        workflowTransactionService.createInitialWorkflowTransactions(savedInitiative);
 
         return savedInitiative;
     }
 
     private void createInitialWorkflowStages(Initiative initiative) {
+        // New workflow stages as per the requirements
         String[] stageNames = {
-            "Draft Submission", "Initial Review", "Technical Assessment", 
-            "Site TSO Review", "Resource Planning", "Budget Approval",
-            "Corporate Review", "Implementation Planning", "Execution Phase",
-            "Progress Monitoring", "Quality Check", "Performance Review",
-            "Benefits Realization", "Documentation", "Project Closure"
+            "Register Initiative",                    // Step 1
+            "Approval",                              // Step 2
+            "Define Responsibilities",               // Step 3
+            "MOC Stage",                            // Step 4
+            "CAPEX Stage",                          // Step 5
+            "Initiative Timeline Tracker",          // Step 6
+            "Trial Implementation & Performance Check", // Step 7
+            "Periodic Status Review with CMO",      // Step 8
+            "Savings Monitoring (1 Month)",         // Step 9
+            "Saving Validation with F&A",          // Step 10
+            "Initiative Closure"                    // Step 11
         };
 
         String[] requiredRoles = {
-            "INIT_LEAD", "APPROVER", "APPROVER", "SITE_TSO_LEAD", "APPROVER",
-            "APPROVER", "CORP_TSO", "SITE_TSO_LEAD", "INIT_LEAD", "APPROVER",
-            "APPROVER", "CORP_TSO", "APPROVER", "INIT_LEAD", "APPROVER"
+            "STLD",    // Site TSD Lead
+            "SH",      // Site Head
+            "EH",      // Engineering Head
+            "IL",      // Initiative Lead
+            "IL",      // Initiative Lead
+            "IL",      // Initiative Lead
+            "STLD",    // Site TSD Lead
+            "CTSD",    // Corp TSD
+            "STLD",    // Site TSD Lead
+            "STLD",    // Site TSD Lead
+            "STLD"     // Site TSD Lead
         };
 
         for (int i = 0; i < stageNames.length; i++) {

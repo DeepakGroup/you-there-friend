@@ -245,6 +245,36 @@ export const timelineTrackerAPI = {
   }
 };
 
+// Workflow Transaction API
+export const workflowTransactionAPI = {
+  getTransactions: (initiativeId: number) => 
+    api.get(`/workflow-transactions/initiative/${initiativeId}`).then(res => res.data),
+  
+  getPendingByRole: (roleCode: string) => 
+    api.get(`/workflow-transactions/pending/${roleCode}`).then(res => res.data),
+  
+  getPendingBySiteAndRole: (site: string, roleCode: string) => 
+    api.get(`/workflow-transactions/pending/${site}/${roleCode}`).then(res => res.data),
+  
+  getCurrentPendingStage: (initiativeId: number) => 
+    api.get(`/workflow-transactions/current-pending/${initiativeId}`).then(res => res.data),
+  
+  getProgressPercentage: (initiativeId: number) => 
+    api.get(`/workflow-transactions/progress/${initiativeId}`).then(res => res.data),
+  
+  processStageAction: (data: {
+    transactionId: number;
+    action: 'approved' | 'rejected';
+    comment: string;
+    assignedUserId?: number;
+    mocNumber?: string;
+    capexNumber?: string;
+    requiresMoc?: boolean;
+    requiresCapex?: boolean;
+  }) => 
+    api.post(`/workflow-transactions/${data.transactionId}/process`, data).then(res => res.data),
+};
+
 // Monthly Monitoring API
 export const monthlyMonitoringAPI = {
   getMonitoringEntries: async (initiativeId: number) => {
