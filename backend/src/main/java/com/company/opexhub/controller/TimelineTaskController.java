@@ -11,7 +11,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/timeline-tasks")
+@RequestMapping("/api/timeline-tasks")
 public class TimelineTaskController {
 
     @Autowired

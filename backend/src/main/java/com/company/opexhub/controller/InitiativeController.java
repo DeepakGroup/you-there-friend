@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/initiatives")
+@RequestMapping("/api/initiatives")
 public class InitiativeController {
 
     @Autowired
