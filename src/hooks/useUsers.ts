@@ -68,3 +68,20 @@ export const useUsersBySiteAndRole = (site: string, role: string) => {
     enabled: !!site && !!role,
   });
 };
+
+export const useInitiativeLeadsBySite = (site: string) => {
+  return useQuery({
+    queryKey: ['users', 'initiative-leads', site],
+    queryFn: async () => {
+      try {
+        // Use dedicated endpoint for Initiative Leads
+        return await userAPI.getInitiativeLeadsBySite(site);
+      } catch (error) {
+        console.warn('Failed to fetch Initiative Leads from API, using mock data:', error);
+        // Fallback to mock data
+        return mockUsers.filter(user => user.site === site && user.role === 'IL');
+      }
+    },
+    enabled: !!site,
+  });
+};

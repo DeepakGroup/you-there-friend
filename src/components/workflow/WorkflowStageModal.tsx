@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CheckCircle, XCircle, Users, AlertTriangle } from "lucide-react";
-import { useUsers } from "@/hooks/useUsers";
+import { CheckCircle, XCircle, Users, AlertTriangle, MapPin } from "lucide-react";
+import { useUsers, useInitiativeLeadsBySite } from "@/hooks/useUsers";
 
 interface WorkflowStageModalProps {
   isOpen: boolean;
@@ -35,12 +35,11 @@ export default function WorkflowStageModal({
 
   const { data: users = [], isLoading: usersLoading, error: usersError } = useUsers();
   
-  // Get Initiative Leads for this specific site from the dedicated endpoint
-  const initiativeLeads = users.filter(user => user.role === "IL" && user.site === transaction?.site);
+  // Get Initiative Leads specifically for this site using the dedicated hook
+  const { data: initiativeLeads = [], isLoading: ilLoading, error: ilError } = useInitiativeLeadsBySite(transaction?.site || '');
   
-  console.log('Users data:', users);
-  console.log('IL users for site', transaction?.site, ':', initiativeLeads);
-  console.log('Users loading:', usersLoading, 'Error:', usersError);
+  console.log('Initiative Leads for site', transaction?.site, ':', initiativeLeads);
+  console.log('IL loading:', ilLoading, 'IL Error:', ilError);
 
   // Early return if transaction is null
   if (!transaction) {
@@ -104,23 +103,42 @@ export default function WorkflowStageModal({
     if (!transaction?.stageNumber) return null;
     
     switch (transaction.stageNumber) {
-      case 3: // Define Responsibilities - Engineering Head assigns Initiative Lead
+      case 3: // Engineering Head assigns Initiative Lead
         return (
           <div className="space-y-4">
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center gap-2 text-sm text-blue-800 mb-1">
+                <MapPin className="h-4 w-4" />
+                <span className="font-medium">Site: {transaction.site}</span>
+              </div>
+              <p className="text-sm text-blue-700">
+                Select an Initiative Lead from users with IL role for this site
+              </p>
+            </div>
+            
             <div>
               <Label htmlFor="assignedUser">Select Initiative Lead *</Label>
               <Select value={assignedUserId} onValueChange={setAssignedUserId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select an Initiative Lead" />
+                  <SelectValue placeholder={
+                    ilLoading ? "Loading Initiative Leads..." : 
+                    initiativeLeads.length === 0 ? "No Initiative Leads available for this site" :
+                    "Select an Initiative Lead"
+                  } />
                 </SelectTrigger>
                 <SelectContent>
                   {initiativeLeads.map((user) => (
                     <SelectItem key={user.id} value={user.id.toString()}>
-                      {user.fullName} ({user.site})
+                      {user.fullName} - {user.email} ({user.site})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {initiativeLeads.length === 0 && !ilLoading && (
+                <p className="text-sm text-red-600 mt-1">
+                  No Initiative Leads found for site {transaction.site}
+                </p>
+              )}
             </div>
           </div>
         );
