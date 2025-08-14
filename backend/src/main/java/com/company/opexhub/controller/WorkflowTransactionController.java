@@ -15,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/workflow-transactions")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://localhost:8080"}, allowCredentials = "false")
 public class WorkflowTransactionController {
 
     @Autowired
