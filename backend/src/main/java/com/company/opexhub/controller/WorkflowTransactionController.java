@@ -1,6 +1,7 @@
 package com.company.opexhub.controller;
 
 import com.company.opexhub.dto.ApiResponse;
+import com.company.opexhub.dto.WorkflowTransactionDetailDTO;
 import com.company.opexhub.entity.WorkflowTransaction;
 import com.company.opexhub.security.UserPrincipal;
 import com.company.opexhub.service.WorkflowTransactionService;
@@ -23,6 +24,11 @@ public class WorkflowTransactionController {
     @GetMapping("/initiative/{initiativeId}")
     public List<WorkflowTransaction> getWorkflowTransactions(@PathVariable Long initiativeId) {
         return workflowTransactionService.getWorkflowTransactions(initiativeId);
+    }
+    
+    @GetMapping("/visible/{initiativeId}")
+    public List<WorkflowTransactionDetailDTO> getVisibleWorkflowTransactions(@PathVariable Long initiativeId) {
+        return workflowTransactionService.getVisibleWorkflowTransactions(initiativeId);
     }
 
     @GetMapping("/pending/{roleCode}")

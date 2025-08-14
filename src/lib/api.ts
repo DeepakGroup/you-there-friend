@@ -267,9 +267,12 @@ export const workflowTransactionAPI = {
   getProgressPercentage: (initiativeId: number) => 
     api.get(`/workflow-transactions/progress/${initiativeId}`).then(res => res.data),
   
+  getVisibleTransactions: (initiativeId: number) =>
+    api.get(`/workflow-transactions/visible/${initiativeId}`).then(res => res.data),
+
   processStageAction: (data: {
     transactionId: number;
-    action: 'approved' | 'rejected';
+    action: string;
     comment: string;
     assignedUserId?: number;
     mocNumber?: string;

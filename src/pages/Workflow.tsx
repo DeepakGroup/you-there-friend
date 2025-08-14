@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, XCircle, Clock, User as UserIcon, ArrowLeft } from "lucide-react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { useToast } from "@/hooks/use-toast";
+import { DynamicWorkflowTracker } from "@/components/workflow/DynamicWorkflowTracker";
 
 interface WorkflowProps {
   user: User;
@@ -122,6 +123,7 @@ export default function Workflow({ user }: WorkflowProps) {
       <Tabs defaultValue="stages" className="w-full">
         <TabsList>
           <TabsTrigger value="stages">Initiative Workflow</TabsTrigger>
+          <TabsTrigger value="dynamic">Dynamic Workflow</TabsTrigger>
           <TabsTrigger value="pending">
             Pending Approvals ({pendingApprovals.length})
           </TabsTrigger>
@@ -325,6 +327,77 @@ export default function Workflow({ user }: WorkflowProps) {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="dynamic" className="space-y-6">
+          {!selectedInitiative ? (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold">Select Initiative for Dynamic Workflow</h2>
+              
+              <div className="space-y-4">
+                {paginatedInitiatives.map((initiative: any) => (
+                  <Card
+                    key={initiative.id}
+                    className="cursor-pointer hover:shadow-lg transition-all duration-200 border-2 hover:border-primary/20"
+                    onClick={() => setSelectedInitiative(initiative.id)}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-semibold">{initiative.title}</h3>
+                            <Badge className={getStatusColor(initiative.status)}>
+                              {initiative.status}
+                            </Badge>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <span className="text-muted-foreground">Site:</span>
+                              <p className="font-medium">{initiative.site}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Initiative Lead:</span>
+                              <p className="font-medium">{initiative.initiativeLead}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Current Stage:</span>
+                              <p className="font-medium">{initiative.currentStageName || 'Register Initiative'}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Expected Savings:</span>
+                              <p className="font-medium">${initiative.expectedSavings || 0}K</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="ml-6">
+                          <Button variant="outline" size="sm">
+                            View Dynamic Workflow →
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <Button variant="outline" onClick={() => setSelectedInitiative(null)}>
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Initiatives
+                </Button>
+                <div>
+                  <h2 className="text-2xl font-semibold">{selectedInitiativeData?.title}</h2>
+                  <p className="text-muted-foreground">Dynamic Role-Based Workflow System</p>
+                </div>
+              </div>
+              
+              <DynamicWorkflowTracker initiativeId={selectedInitiative} />
             </div>
           )}
         </TabsContent>

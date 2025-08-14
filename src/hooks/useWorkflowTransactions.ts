@@ -9,6 +9,14 @@ export const useWorkflowTransactions = (initiativeId: number) => {
   });
 };
 
+export const useVisibleWorkflowTransactions = (initiativeId: number) => {
+  return useQuery({
+    queryKey: ['visible-workflow-transactions', initiativeId],
+    queryFn: () => workflowTransactionAPI.getVisibleTransactions(initiativeId),
+    enabled: !!initiativeId,
+  });
+};
+
 export const usePendingTransactionsByRole = (roleCode: string) => {
   return useQuery({
     queryKey: ['pending-transactions', roleCode],
@@ -48,6 +56,7 @@ export const useProcessStageAction = () => {
     mutationFn: workflowTransactionAPI.processStageAction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workflow-transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['visible-workflow-transactions'] });
       queryClient.invalidateQueries({ queryKey: ['pending-transactions'] });
       queryClient.invalidateQueries({ queryKey: ['current-pending-stage'] });
       queryClient.invalidateQueries({ queryKey: ['progress-percentage'] });
