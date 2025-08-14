@@ -158,13 +158,12 @@ public class DataInitializer implements CommandLineRunner {
         // Check if wf_master data already exists
         if (wfMasterRepository.count() == 0) {
             // Initialize WF Master data for NDS site with correct stage assignments
+            // IL stages (4,5,6) are dynamic and will be created when EH selects Initiative Lead
             String[][] wfMasterData = {
                 {"1", "Register Initiative", "STLD", "manoj.tiwari@godeepak.com"},
-                {"2", "Approval", "SH", "priya.sharma@godeepak.com"},
-                {"3", "Define Responsibilities", "EH", "amit.patel@godeepak.com"},
-                {"4", "MOC Stage", "IL", "rajesh.kumar@godeepak.com"},
-                {"5", "CAPEX Stage", "IL", "rajesh.kumar@godeepak.com"},
-                {"6", "Initiative Timeline Tracker", "IL", "rajesh.kumar@godeepak.com"},
+                {"2", "Site Head Approval", "SH", "priya.sharma@godeepak.com"},
+                {"3", "Engineering Head Approval", "EH", "amit.patel@godeepak.com"},
+                // IL stages removed - they will be created dynamically after Stage 3
                 {"7", "Trial Implementation & Performance Check", "STLD", "vikram.gupta@godeepak.com"},
                 {"8", "Periodic Status Review with CMO", "CTSD", "kavya.nair@godeepak.com"},
                 {"9", "Savings Monitoring (1 Month)", "STLD", "suresh.reddy@godeepak.com"},
